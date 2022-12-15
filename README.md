@@ -10,11 +10,11 @@ export default function Counter() {
   const [count, setCount] = store(0)
 
   return {
-    class: 'counter-outer',
+    r: 'div',
+    class: 'counter',
     _click: () => setCount(count + 1),
     c: [
       { r: 'p', c: count },
-      { r: Counter2 },
     ],
   }
 }
