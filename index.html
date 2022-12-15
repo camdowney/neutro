@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>Render Test</title>
+</head>
+<body>
+</body>
+</html>
+
+<script type='module'>
+  import { render, store } from './index.js'
+
+  const Counter = () => {
+    const [count, setCount] = store(0)
+
+    return {
+      r: 'div',
+      class: 'counter',
+      _click: () => setCount(count + 1),
+      c: [
+        { r: 'p', c: count },
+      ],
+    }
+  }
+
+  render('body', [
+    { r: 'header' },
+    { r: 'section', c: Counter },
+    { r: 'footer' },
+  ])
+</script>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+  }
+
+  section {
+    padding: 2rem;
+  }
+
+  .counter {
+    display: inline-block;
+    background-color: #0a0a0a;
+    color: #fafafa;
+    padding: 2rem;
+    border-radius: 1rem;
+  }
+</style>

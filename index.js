@@ -71,7 +71,7 @@ export const render = (at, props, replace) => {
   }
 
   if (isComponent)
-    components[currentID++] = { e: created, props }
+    components[currentID++] = [created, props]
 
   if (children !== undefined)
     render(created, children)
@@ -88,10 +88,9 @@ export const store = initial => {
 
   const setStore = value => {
     storage[key] = typeof value === 'function' ? value(storage[key]) : value
-    
-    const { e, props } = components[uid]
+
     currentID = uid
-    render(e, props, true)
+    render(...components[uid], true)
     currentID = components.length
   }
 
@@ -99,8 +98,7 @@ export const store = initial => {
 }
 
 export const memo = (value, dependencies) => {
-  const uid = currentID
-  const key = `${uid}-${storeID++}`
+  const key = `${currentID}-${storeID++}`
   const deps = Array.isArray(dependencies) ? dependencies : []
 
   if (!storage[key] || storage[key].deps.some((stored, i) => stored !== deps[i]))
