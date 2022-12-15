@@ -1,5 +1,5 @@
 # Render
-Render is a ridiculously simple way to integrate components into your vanilla JS application. No other build tools are needed; simply create component functions and return their data as JSON. For state management, use the functions store() and memo(), which are analogous to React's useState and useMemo hooks.
+Render is a ridiculously simple way to integrate components into your vanilla JS application. No other tools are needed; simply create component functions and return their data as JSON. For state management, use the functions store() and memo(), which are analogous to React's useState and useMemo hooks.
 
 Example Counter component:
 
