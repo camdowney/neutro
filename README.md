@@ -1,7 +1,11 @@
 # Render
-Render is a ridiculously simple way to integrate components into your vanilla JS application. No other build tools are needed; simply create component functions and return their data as JSON. For example:
+Render is a ridiculously simple way to integrate components into your vanilla JS application. No other build tools are needed; simply create component functions and return their data as JSON. Render also contains the functions store() and memo(), which are analogous to React's useState and useMemo hooks.
+
+Example Counter component:
 
 ```js
+import { store } from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
+
 export default function Counter() {
   const [count, setCount] = store(0)
 
@@ -16,7 +20,22 @@ export default function Counter() {
 }
 ```
 
-Render also contains the functions store() and memo(), which are analogous to React's useState and useMemo hooks.
+Usage in script imported by HTML file:
+
+```js
+import { render } from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
+import Counter from './components/Counter.js'
+
+render('body', [
+  { r: 'header' },
+  { r: 'main', c: [
+    { r: 'section', class: 'counter-wrapper', c: [
+      { r: Counter },
+    ]},
+  ]},
+  { r: 'footer' },
+])
+```
 
 View a more complete example implementation [here](https://github.com/camdowney/word-engine).
 
