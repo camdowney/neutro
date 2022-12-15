@@ -16,20 +16,13 @@
     const [count, setCount] = store(0)
 
     return {
-      r: 'div',
       class: 'counter',
       _click: () => setCount(count + 1),
-      c: [
-        { r: 'p', c: count },
-      ],
+      c: `Counter: ${count}`,
     }
   }
 
-  render('body', [
-    { r: 'header' },
-    { r: 'section', c: Counter },
-    { r: 'footer' },
-  ])
+  render('body', { r: 'section', c: Counter })
 </script>
 
 <style>
@@ -40,6 +33,10 @@
     box-sizing: border-box;
   }
 
+  html {
+    font-family: sans-serif;
+  }
+
   section {
     padding: 2rem;
   }
@@ -48,7 +45,7 @@
     display: inline-block;
     background-color: #0a0a0a;
     color: #fafafa;
-    padding: 2rem;
-    border-radius: 1rem;
+    padding: 1rem 2rem;
+    border-radius: 9999px;
   }
 </style>
