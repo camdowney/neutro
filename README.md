@@ -13,7 +13,7 @@ export default function Counter() {
     r: 'div', // "r" stands for "return type", and may be a tag or component function
     class: 'counter',
     _click: () => setCount(count + 1),
-    c: [ // "c" stands for "children", and may be an array, component function, object, or plain text.
+    c: [ // "c" stands for "children", and may be an array, component function, object, or plain HTML.
       { r: 'p', c: count },
     ],
   }
