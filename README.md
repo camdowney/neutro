@@ -29,7 +29,7 @@ import Counter from './components/Counter.js'
 render('body', [
   { r: 'header' },
   { r: 'main', c: [
-    { r: 'section', class: 'counter-wrapper', c: [
+    { r: 'section', class: 'counter-section', c: [
       { r: Counter },
     ]},
   ]},
