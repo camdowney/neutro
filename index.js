@@ -1,7 +1,7 @@
 const signal = (at, event) => 
   at.dispatchEvent(new Event(event))
 
-const createElement = ({ r, ...props }) => {
+const build = ({ r, ...props }) => {
   let effects = {}
   let listeners = {}
   let atts = {}
@@ -62,11 +62,11 @@ export const render = (at, props, replace) => {
     signal(origin, 'unmount')
 
     origin.querySelectorAll('*').forEach(c => signal(c, 'unmount'))
-    parent.replaceChild(createElement(atts), origin)
+    parent.replaceChild(build(atts), origin)
     created = parent.children[index]
   }
   else {
-    origin.append(createElement(atts))
+    origin.append(build(atts))
     created = origin.lastChild
   }
 
