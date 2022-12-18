@@ -10,7 +10,7 @@ export default function Counter() {
   const [count, setCount] = store(0)
 
   return {
-    r: 'div', // "r" stands for "return type" and may be a tag or component function
+    r: 'div', // "r" stands for "rendered element" and may be a tag or component function
     class: 'counter',
     _click: () => setCount(count + 1),
     c: [ // "c" stands for "children" and may be an array, component function, object, or HTML

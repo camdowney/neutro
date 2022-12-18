@@ -9,10 +9,10 @@ const build = ({ r, ...props }) => {
   Object.entries(props).forEach(([key, value]) => key.startsWith('__') ? effects[key.substring(2)] = value 
     : key.startsWith('_') ? listeners[key.substring(1)] = value : atts[key] = value)
 
-  const created = document.createElement(r || 'div')
-  Object.entries(atts).forEach(([att, value]) => created.setAttribute(att.replaceAll('_', '-'), value))
+  const newNode = document.createElement(r || 'div')
+  Object.entries(atts).forEach(([att, value]) => newNode.setAttribute(att.replaceAll('_', '-'), value))
 
-  const addEvent = ([e, f]) => created.addEventListener(e, f)
+  const addEvent = ([e, f]) => newNode.addEventListener(e, f)
 
   Object.entries(effects).forEach(([e, f]) => {
     addEvent(['mount', () => window.addEventListener(e, f)])
@@ -21,7 +21,7 @@ const build = ({ r, ...props }) => {
 
   Object.entries(listeners).forEach(addEvent)
 
-  return created
+  return newNode
 }
 
 let storage = {}
@@ -44,46 +44,45 @@ export const render = (at, props, replace) => {
   if (typeof props !== 'object')
     return origin.innerHTML += props
 
-  const { r, ...params } = props
-  const isComponent = typeof r === 'function'
+  const isComponent = typeof props?.r === 'function'
 
   if (isComponent) 
     storeID = 0
 
-  const obj = isComponent ? r({ uid: '_' + currentID, ...params }) : props
-
-  const { c: children, ...atts } = (typeof obj !== 'object' || Array.isArray(obj)) ? { r: 'span', c: obj } : obj
-  let created = null
+  const nodeData = isComponent ? props?.r({ uid: '_' + currentID, ...props }) : props
+  const isObject = typeof nodeData === 'object' && !Array.isArray(nodeData)
+  const { c: children, ...atts } = isObject ? nodeData : { r: 'span', c: nodeData }
+  
+  let createdNode = null
 
   if (replace) {
     const parent = origin.parentNode
     const index = [...parent.children].indexOf(origin)
 
     signal(origin, 'unmount')
-
     origin.querySelectorAll('*').forEach(c => signal(c, 'unmount'))
+
     parent.replaceChild(build(atts), origin)
-    created = parent.children[index]
+    createdNode = parent.children[index]
   }
   else {
     origin.append(build(atts))
-    created = origin.lastChild
+    createdNode = origin.lastChild
   }
 
   if (isComponent)
-    components[currentID++] = [created, props]
+    components[currentID++] = [createdNode, props]
 
-  if (children !== undefined)
-    render(created, children)
+  render(createdNode, children)
 
-  signal(created, 'mount')
+  signal(createdNode, 'mount')
 }
 
 export const store = initial => {
   const uid = currentID
   const key = `${uid}-${storeID++}`
 
-  if (!storage[key]) 
+  if (!storage[key])
     storage[key] = initial
 
   const setStore = value => {
@@ -97,12 +96,11 @@ export const store = initial => {
   return [storage[key], setStore]
 }
 
-export const memo = (value, dependencies) => {
+export const memo = (value, dependencies = []) => {
   const key = `${currentID}-${storeID++}`
-  const deps = Array.isArray(dependencies) ? dependencies : []
 
-  if (!storage[key] || storage[key].deps.some((stored, i) => stored !== deps[i]))
-    storage[key] = { value: value(), deps }
+  if (!storage[key] || storage[key].dependencies.some((stored, i) => stored !== dependencies[i]))
+    storage[key] = { value: value(), dependencies }
 
   return storage[key].value
 }
