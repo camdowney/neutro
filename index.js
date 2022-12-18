@@ -1,7 +1,7 @@
-const signal = (at, event) => 
+const a = (at, event) => 
   at.dispatchEvent(new Event(event))
 
-const build = ({ r, ...props }) => {
+const b = ({ r, ...props }) => {
   let effects = {}
   let listeners = {}
   let atts = {}
@@ -12,11 +12,11 @@ const build = ({ r, ...props }) => {
   const newNode = document.createElement(r || 'div')
   Object.entries(atts).forEach(([att, value]) => newNode.setAttribute(att.replaceAll('_', '-'), value))
 
-  const addEvent = ([e, f]) => newNode.addEventListener(e, f)
+  const addEvent = listener => newNode.addEventListener(...listener)
 
-  Object.entries(effects).forEach(([e, f]) => {
-    addEvent(['mount', () => window.addEventListener(e, f)])
-    addEvent(['unmount', () => window.removeEventListener(e, f)])
+  Object.entries(effects).forEach(effect => {
+    addEvent(['mount', () => window.addEventListener(...effect)])
+    addEvent(['unmount', () => window.removeEventListener(...effect)])
   })
 
   Object.entries(listeners).forEach(addEvent)
@@ -24,10 +24,10 @@ const build = ({ r, ...props }) => {
   return newNode
 }
 
-let storage = {}
-let components = []
-let currentID = 0
-let storeID = 0
+let d = {}
+let f = []
+let g = 0
+let h = 0
 
 export const render = (at, props, replace) => {
   if (!at || props === undefined)
@@ -39,7 +39,7 @@ export const render = (at, props, replace) => {
     return render(origin, { r: props }, replace)
 
   if (Array.isArray(props))
-    return props.forEach(p => render(origin, p))
+    return props.forEach(node => render(origin, node))
 
   if (typeof props !== 'object')
     return origin.innerHTML += props
@@ -47,9 +47,9 @@ export const render = (at, props, replace) => {
   const isComponent = typeof props?.r === 'function'
 
   if (isComponent) 
-    storeID = 0
+    h = 0
 
-  const nodeData = isComponent ? props?.r({ uid: '_' + currentID, ...props }) : props
+  const nodeData = isComponent ? props?.r({ uid: '_' + g, ...props }) : props
   const isObject = typeof nodeData === 'object' && !Array.isArray(nodeData)
   const { c: children, ...atts } = isObject ? nodeData : { r: 'span', c: nodeData }
   
@@ -59,48 +59,48 @@ export const render = (at, props, replace) => {
     const parent = origin.parentNode
     const index = [...parent.children].indexOf(origin)
 
-    signal(origin, 'unmount')
-    origin.querySelectorAll('*').forEach(c => signal(c, 'unmount'))
+    a(origin, 'unmount')
+    origin.querySelectorAll('*').forEach(child => a(child, 'unmount'))
 
-    parent.replaceChild(build(atts), origin)
+    parent.replaceChild(b(atts), origin)
     createdNode = parent.children[index]
   }
   else {
-    origin.append(build(atts))
+    origin.append(b(atts))
     createdNode = origin.lastChild
   }
 
   if (isComponent)
-    components[currentID++] = [createdNode, props]
+    f[g++] = [createdNode, props]
 
   render(createdNode, children)
 
-  signal(createdNode, 'mount')
+  a(createdNode, 'mount')
 }
 
 export const store = initial => {
-  const uid = currentID
-  const key = `${uid}-${storeID++}`
+  const uid = g
+  const key = `${uid}-${h++}`
 
-  if (!storage[key])
-    storage[key] = initial
+  if (!d[key])
+    d[key] = initial
 
   const setStore = value => {
-    storage[key] = typeof value === 'function' ? value(storage[key]) : value
+    d[key] = typeof value === 'function' ? value(d[key]) : value
 
-    currentID = uid
-    render(...components[uid], true)
-    currentID = components.length
+    g = uid
+    render(...f[uid], true)
+    g = f.length
   }
 
-  return [storage[key], setStore]
+  return [d[key], setStore]
 }
 
 export const memo = (value, dependencies = []) => {
-  const key = `${currentID}-${storeID++}`
+  const key = `${g}-${h++}`
 
-  if (!storage[key] || storage[key].dependencies.some((stored, i) => stored !== dependencies[i]))
-    storage[key] = { value: value(), dependencies }
+  if (!d[key] || d[key].dependencies.some((stored, i) => stored !== dependencies[i]))
+    d[key] = { value: value(), dependencies }
 
-  return storage[key].value
+  return d[key].value
 }
