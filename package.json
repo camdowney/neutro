@@ -1,0 +1,17 @@
+{
+  "name": "render",
+  "author": "@camdowney",
+  "version": "1.0.0",
+  "description": "A ridiculously simple way to integrate components into your vanilla JS application—no other tools needed.",
+  "keywords": [
+    "javascript"
+  ],
+  "main": "./min.js",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "devDependencies": {
+    "rollup": "^2.77.2",
+    "rollup-plugin-terser": "^7.0.2"
+  }
+}
