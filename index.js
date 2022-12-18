@@ -29,7 +29,34 @@ let components = []
 let currentID = 0
 let storeID = 0
 
-export const render = (at, props, replace) => {
+const store = initial => {
+  const uid = currentID
+  const key = `${uid}-${storeID++}`
+
+  if (!storage[key])
+    storage[key] = initial
+
+  const set = value => {
+    storage[key] = typeof value === 'function' ? value(storage[key]) : value
+
+    currentID = uid
+    render(...components[uid], true)
+    currentID = components.length
+  }
+
+  return [storage[key], set]
+}
+
+const memo = (value, dependencies = []) => {
+  const key = `${currentID}-${storeID++}`
+
+  if (!storage[key] || storage[key].dependencies.some((stored, i) => stored !== dependencies[i]))
+    storage[key] = { value: value(), dependencies }
+
+  return storage[key].value
+}
+
+const render = (at, props, replace) => {
   if (!at || props === undefined)
     return
 
@@ -49,7 +76,7 @@ export const render = (at, props, replace) => {
   if (isComponent) 
     storeID = 0
 
-  const nodeData = isComponent ? props?.r({ uid: '_' + currentID, ...props }) : props
+  const nodeData = isComponent ? props?.r({ uid: '_' + currentID, store, memo, ...props }) : props
   const isObject = typeof nodeData === 'object' && !Array.isArray(nodeData)
   const { c: children, ...atts } = isObject ? nodeData : { r: 'span', c: nodeData }
   
@@ -78,29 +105,5 @@ export const render = (at, props, replace) => {
   signal(createdNode, 'mount')
 }
 
-export const store = initial => {
-  const uid = currentID
-  const key = `${uid}-${storeID++}`
-
-  if (!storage[key])
-    storage[key] = initial
-
-  const setStore = value => {
-    storage[key] = typeof value === 'function' ? value(storage[key]) : value
-
-    currentID = uid
-    render(...components[uid], true)
-    currentID = components.length
-  }
-
-  return [storage[key], setStore]
-}
-
-export const memo = (value, dependencies = []) => {
-  const key = `${currentID}-${storeID++}`
-
-  if (!storage[key] || storage[key].dependencies.some((stored, i) => stored !== dependencies[i]))
-    storage[key] = { value: value(), dependencies }
-
-  return storage[key].value
-}
+// const render = j
+export default render

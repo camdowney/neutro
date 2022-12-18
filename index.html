@@ -10,9 +10,9 @@
 </html>
 
 <script type='module'>
-  import { render, store } from './min.js'
+  import render from './index.js'
 
-  const Counter = () => {
+  const Counter = ({ store }) => {
     const [count, setCount] = store(0)
 
     return {
