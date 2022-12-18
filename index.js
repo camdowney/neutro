@@ -32,19 +32,23 @@ let storeID = 0
 const store = initial => {
   const uid = currentID
   const key = `${uid}-${storeID++}`
+  const stateObject = {}
 
   if (!storage[key])
     storage[key] = initial
 
-  const set = value => {
-    storage[key] = typeof value === 'function' ? value(storage[key]) : value
+  Object.defineProperty(stateObject, 'value', {
+    set: value => {
+      storage[key] = typeof value === 'function' ? value(storage[key]) : value
+  
+      currentID = uid
+      render(...components[uid], true)
+      currentID = components.length
+    },
+    get: () => storage[key],
+  })
 
-    currentID = uid
-    render(...components[uid], true)
-    currentID = components.length
-  }
-
-  return [storage[key], set]
+  return stateObject
 }
 
 const memo = (value, dependencies = []) => {
@@ -105,5 +109,4 @@ const render = (at, props, replace) => {
   signal(createdNode, 'mount')
 }
 
-// const render = j
 export default render
