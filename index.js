@@ -1,7 +1,7 @@
-const a = (at, event) => 
+const signal = (at, event) => 
   at.dispatchEvent(new Event(event))
 
-const b = ({ r, ...props }) => {
+const build = ({ r, ...props }) => {
   let effects = {}
   let listeners = {}
   let atts = {}
@@ -24,10 +24,10 @@ const b = ({ r, ...props }) => {
   return newNode
 }
 
-let d = {}
-let f = []
-let g = 0
-let h = 0
+let storage = {}
+let components = []
+let currentID = 0
+let storeID = 0
 
 export const render = (at, props, replace) => {
   if (!at || props === undefined)
@@ -47,9 +47,9 @@ export const render = (at, props, replace) => {
   const isComponent = typeof props?.r === 'function'
 
   if (isComponent) 
-    h = 0
+    storeID = 0
 
-  const nodeData = isComponent ? props?.r({ uid: '_' + g, ...props }) : props
+  const nodeData = isComponent ? props?.r({ uid: '_' + currentID, ...props }) : props
   const isObject = typeof nodeData === 'object' && !Array.isArray(nodeData)
   const { c: children, ...atts } = isObject ? nodeData : { r: 'span', c: nodeData }
   
@@ -59,48 +59,48 @@ export const render = (at, props, replace) => {
     const parent = origin.parentNode
     const index = [...parent.children].indexOf(origin)
 
-    a(origin, 'unmount')
-    origin.querySelectorAll('*').forEach(child => a(child, 'unmount'))
+    signal(origin, 'unmount')
+    origin.querySelectorAll('*').forEach(child => signal(child, 'unmount'))
 
-    parent.replaceChild(b(atts), origin)
+    parent.replaceChild(build(atts), origin)
     createdNode = parent.children[index]
   }
   else {
-    origin.append(b(atts))
+    origin.append(build(atts))
     createdNode = origin.lastChild
   }
 
   if (isComponent)
-    f[g++] = [createdNode, props]
+    components[currentID++] = [createdNode, props]
 
   render(createdNode, children)
 
-  a(createdNode, 'mount')
+  signal(createdNode, 'mount')
 }
 
 export const store = initial => {
-  const uid = g
-  const key = `${uid}-${h++}`
+  const uid = currentID
+  const key = `${uid}-${storeID++}`
 
-  if (!d[key])
-    d[key] = initial
+  if (!storage[key])
+    storage[key] = initial
 
   const setStore = value => {
-    d[key] = typeof value === 'function' ? value(d[key]) : value
+    storage[key] = typeof value === 'function' ? value(storage[key]) : value
 
-    g = uid
-    render(...f[uid], true)
-    g = f.length
+    currentID = uid
+    render(...components[uid], true)
+    currentID = components.length
   }
 
-  return [d[key], setStore]
+  return [storage[key], setStore]
 }
 
 export const memo = (value, dependencies = []) => {
-  const key = `${g}-${h++}`
+  const key = `${currentID}-${storeID++}`
 
-  if (!d[key] || d[key].dependencies.some((stored, i) => stored !== dependencies[i]))
-    d[key] = { value: value(), dependencies }
+  if (!storage[key] || storage[key].dependencies.some((stored, i) => stored !== dependencies[i]))
+    storage[key] = { value: value(), dependencies }
 
-  return d[key].value
+  return storage[key].value
 }
