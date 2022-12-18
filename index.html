@@ -14,12 +14,10 @@
 
   const Counter = ({ store }) => {
     const count = store(0)
-    // store.count = 0 // first set shouldn't rerender
 
     return {
       class: 'counter',
       _click: () => count.value++,
-      // _click: () => store.count++,
       c: `Counter: ${count.value}`,
     }
   }

@@ -32,12 +32,12 @@ let storeID = 0
 const store = initial => {
   const uid = currentID
   const key = `${uid}-${storeID++}`
-  const stateObject = {}
+  const accessor = {}
 
   if (!storage[key])
     storage[key] = initial
 
-  Object.defineProperty(stateObject, 'value', {
+  Object.defineProperty(accessor, 'value', {
     set: value => {
       storage[key] = typeof value === 'function' ? value(storage[key]) : value
   
@@ -48,7 +48,7 @@ const store = initial => {
     get: () => storage[key],
   })
 
-  return stateObject
+  return accessor
 }
 
 const memo = (value, dependencies = []) => {
