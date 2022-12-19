@@ -1,7 +1,7 @@
 const signal = (at, event) => 
   at.dispatchEvent(new Event(event))
 
-const build = ({ r, ...props }) => {
+const build = ({ tag, ...props }) => {
   let effects = {}
   let listeners = {}
   let atts = {}
@@ -9,7 +9,7 @@ const build = ({ r, ...props }) => {
   Object.entries(props).forEach(([key, value]) => key.startsWith('__') ? effects[key.substring(2)] = value 
     : key.startsWith('_') ? listeners[key.substring(1)] = value : atts[key] = value)
 
-  const newNode = document.createElement(r || 'div')
+  const newNode = document.createElement(tag || 'div')
   Object.entries(atts).forEach(([att, value]) => newNode.setAttribute(att.replaceAll('_', '-'), value))
 
   const addEvent = listener => newNode.addEventListener(...listener)
@@ -57,7 +57,7 @@ const render = (at, props, replace) => {
   const origin = typeof at !== 'string' ? at : document?.querySelector(at)
 
   if (typeof props === 'function')
-    return render(origin, { r: props }, replace)
+    return render(origin, { tag: props }, replace)
 
   if (Array.isArray(props))
     return props.forEach(node => render(origin, node))
@@ -65,14 +65,14 @@ const render = (at, props, replace) => {
   if (typeof props !== 'object')
     return origin.innerHTML += props
 
-  const isComponent = typeof props?.r === 'function'
+  const isComponent = typeof props?.tag === 'function'
 
   if (isComponent) 
     storeID = 0
 
-  const nodeData = isComponent ? props?.r({ uid: '_' + currentID, store, ...props }) : props
+  const nodeData = isComponent ? props?.tag({ uid: '_' + currentID, store, ...props }) : props
   const isObject = typeof nodeData === 'object' && !Array.isArray(nodeData)
-  const { c: children, ...atts } = isObject ? nodeData : { r: 'span', c: nodeData }
+  const { c: children, ...atts } = isObject ? nodeData : { tag: 'span', c: nodeData }
   
   let createdNode = null
 

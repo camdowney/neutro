@@ -7,12 +7,13 @@ export default function Counter({ store }) {
   const count = store(0)
 
   return {
-    r: 'button', // "r" stands for "rendered element" and may be a tag or component function
+    tag: 'button',
     class: 'counter',
     _click: () => count.value++,
-    c: [ // "c" stands for "children" and may be an array, component function, object, or HTML
-      { r: 'p', c: count.value },
-    ],
+    c: { // short for "children" or "content"
+      tag: 'p', 
+      c: count.value
+    },
   }
 }
 ```
@@ -23,13 +24,13 @@ import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
 import Counter from './components/Counter.js'
 
 render('body', [
-  { r: 'header' },
-  { r: 'main', c: [
-    { r: 'section', class: 'counter-section', c: [
-      { r: Counter },
-    ]},
+  { tag: 'header' },
+  { tag: 'main', c: [
+    { tag: 'section', class: 'counter-section', c:
+      { tag: Counter }
+    },
   ]},
-  { r: 'footer' },
+  { tag: 'footer' },
 ])
 ```
 
@@ -40,22 +41,20 @@ To get started, just add the below line into your JS wherever you plan on using 
 import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
 ```
 
-## Using Render
+## Documentation
 
 ### render()
 The render function accepts two primary arguments: an origin and the node(s) to render. An origin may either be an element or a string that can be used to query an element. Nodes may be represented as a function, object, plain HTML, or an array containing any combination of these types.
 
-#### Example
 The below code appends an empty div to the body of an HTML document.
 
 ```js
-render('body', { r: 'div', })
+render('body', { tag: 'div' })
 ```
 
-### store
+### store()
 Component functions receive a custom "store" property by default. Render stores are similar to React's useState hook; they accept a default value and will trigger rerenders when modified. However, to negate the need for a separate setter function, stores return a single accessor object (inspired by SolidJS signals) for both updating and retrieving their values.
 
-#### Example
 The below code creates a new store and initializes its value to 0. This value can then be accessed and incremented on the store object directly to trigger rerenders. Note that stores cannot be interacted with directly; the "value" property must be used.
 
 ```js
@@ -63,7 +62,7 @@ export default function Component({ store }) {
   const count = store(0)
 
   return {
-    r: 'button',
+    tag: 'button',
     _click: () => count.value++,
     c: count.value,
   }
@@ -73,8 +72,7 @@ export default function Component({ store }) {
 ### uid
 Component functions additionally receive a UID by default. These may be used for maintaining unique components, such as by using them in query aggregation.
 
-#### Example
-The below example allows a component to query and interact with the HTML it outputs.
+The below code allows a component to query and interact with the HTML it outputs.
 
 ```js
 export default function Component({ uid }) {
@@ -84,9 +82,9 @@ export default function Component({ uid }) {
   }
 
   return {
-    r: 'div',
-    _mount: onMount,
+    tag: 'div',
     id: uid,
+    _mount: onMount,
   }
 }
 ```
