@@ -32,12 +32,32 @@ let storeID = 0
 const store = initial => {
   const uid = currentID
   const key = `${uid}-${storeID++}`
-  const accessor = {}
 
   if (!storage[key])
     storage[key] = initial
 
-  Object.defineProperty(accessor, 'value', {
+  return {
+    set value(newValue) {
+      storage[key] = typeof newValue === 'function' ? newValue(storage[key]) : newValue
+  
+      currentID = uid
+      render(...components[uid], true)
+      currentID = components.length
+    },
+    get value() {
+      return storage[key]
+    }
+  }
+}
+
+const store2 = initial => {
+  const uid = currentID
+  const key = `${uid}-${storeID++}`
+
+  if (!storage[key])
+    storage[key] = initial
+
+  const accessor = {
     set: value => {
       storage[key] = typeof value === 'function' ? value(storage[key]) : value
   
@@ -46,7 +66,7 @@ const store = initial => {
       currentID = components.length
     },
     get: () => storage[key],
-  })
+  }
 
   return accessor
 }
