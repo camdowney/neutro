@@ -16,6 +16,7 @@
     const count = store(0)
 
     return {
+      r: 'button',
       class: 'counter',
       _click: () => count.value++,
       c: `Counter: ${count.value}`,
@@ -42,10 +43,17 @@
   }
 
   .counter {
+    font-size: 1rem;
     display: inline-block;
     background-color: #0a0a0a;
     color: #fafafa;
     padding: 1rem 2rem;
     border-radius: 9999px;
+    transition: 0.2s;
+    cursor: pointer;
+  }
+
+  .counter:hover {
+    background-color: #2a2a2a;
   }
 </style>
