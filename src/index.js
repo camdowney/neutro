@@ -1,16 +1,38 @@
-const signal = (at, event) => 
-  at.dispatchEvent(new Event(event))
+/**
+ * Dispatches a simple event to a target element
+ * @param {Element} target Target element
+ * @param {string} eventName Name of event to be dispatched
+ * @returns {void}
+ */
+const signalEvent = (target, eventName) => {
+  target.dispatchEvent(new Event(eventName))
+}
 
-const build = ({ tag, ...props }) => {
+/**
+ * Creates an element with attribute and event listener properties as desired
+ * @param {{ tag: string, ...props: any[] }} params
+ * @param {string} tag Element tag
+ * @param {any[]} props Element data such as attributes and listeners
+ * @returns {Element} Created element
+ */
+const createElement = ({ tag, ...props }) => {
   let effects = {}
   let listeners = {}
   let atts = {}
 
-  Object.entries(props).forEach(([key, value]) => key.startsWith('__') ? effects[key.substring(2)] = value 
-    : key.startsWith('_') ? listeners[key.substring(1)] = value : atts[key] = value)
+  Object.entries(props).forEach(([key, value]) => 
+    key.startsWith('__') 
+      ? effects[key.substring(2)] = value 
+      : key.startsWith('_') 
+        ? listeners[key.substring(1)] = value 
+        : atts[key] = value
+  )
 
   const newNode = document.createElement(tag || 'div')
-  Object.entries(atts).forEach(([att, value]) => newNode.setAttribute(att.replaceAll('_', '-'), value))
+
+  Object.entries(atts).forEach(([att, value]) => 
+    newNode.setAttribute(att.replaceAll('_', '-'), value)
+  )
 
   const addEvent = listener => newNode.addEventListener(...listener)
 
@@ -24,17 +46,29 @@ const build = ({ tag, ...props }) => {
   return newNode
 }
 
-let storage = {}
+// Keeps track of component data between re-renders
 let components = []
+
+// Used by stores
+let storage = {}
+
+// Allows components to receive UIDs and identifies groups of stores per component
 let currentID = 0
+
+// Identifies stores within a component
 let storeID = 0
 
-const store = initial => {
+/**
+ * Used at top-level of components to maintain state while triggering re-renders; may be interacted with through value property
+ * @param {any} initialValue Initial value of store
+ * @returns {{ value: any }} Store value accessor
+ */
+const store = initialValue => {
   const uid = currentID
   const key = `${uid}-${storeID++}`
 
   if (!storage[key])
-    storage[key] = initial
+    storage[key] = initialValue
 
   return {
     set value(newValue) {
@@ -50,29 +84,44 @@ const store = initial => {
   }
 }
 
-const render = (at, props, replace) => {
-  if (!at || props === undefined)
+/**
+ * Converts node representations to actual nodes and appends output to (or replaces) target element
+ * @param {Element|string} target Element (or element query) to render node(s) at
+ * @param {{}|[]|Function|string} nodeData Representation of node(s) to render
+ * @param {boolean} replace Replaces target with rendered node(s) if true; used for re-renders only
+ * @returns {void}
+ */
+const render = (target, nodeData, replace) => {
+  if (!target || nodeData === undefined)
     return
 
-  const origin = typeof at !== 'string' ? at : document?.querySelector(at)
+  const origin = typeof target !== 'string' 
+    ? target
+    : document?.querySelector(target)
 
-  if (typeof props === 'function')
-    return render(origin, { tag: props }, replace)
+  if (typeof nodeData === 'function')
+    return render(origin, { tag: nodeData }, replace)
 
-  if (Array.isArray(props))
-    return props.forEach(node => render(origin, node))
+  if (Array.isArray(nodeData))
+    return nodeData.forEach(node => render(origin, node))
 
-  if (typeof props !== 'object')
-    return origin.innerHTML += props
+  if (typeof nodeData !== 'object')
+    return origin.innerHTML += nodeData
 
-  const isComponent = typeof props?.tag === 'function'
+  const isComponent = typeof nodeData?.tag === 'function'
 
   if (isComponent) 
     storeID = 0
 
-  const nodeData = isComponent ? props?.tag({ uid: '_' + currentID, store, ...props }) : props
-  const isObject = typeof nodeData === 'object' && !Array.isArray(nodeData)
-  const { c: children, ...atts } = isObject ? nodeData : { tag: 'span', c: nodeData }
+  const cleanData = isComponent
+    ? nodeData?.tag({ uid: '_' + currentID, store, ...nodeData })
+    : nodeData
+
+  const isObject = typeof cleanData === 'object' && !Array.isArray(cleanData)
+
+  const { c: children, ...atts } = isObject 
+    ? cleanData
+    : { tag: 'span', c: cleanData }
   
   let createdNode = null
 
@@ -80,14 +129,14 @@ const render = (at, props, replace) => {
     const parent = origin.parentNode
     const index = [...parent.children].indexOf(origin)
 
-    signal(origin, 'unmount')
-    origin.querySelectorAll('*').forEach(child => signal(child, 'unmount'))
+    signalEvent(origin, 'unmount')
+    origin.querySelectorAll('*').forEach(child => signalEvent(child, 'unmount'))
 
-    parent.replaceChild(build(atts), origin)
+    parent.replaceChild(createElement(atts), origin)
     createdNode = parent.children[index]
   }
   else {
-    origin.append(build(atts))
+    origin.append(createElement(atts))
     createdNode = origin.lastChild
   }
 
@@ -96,7 +145,7 @@ const render = (at, props, replace) => {
 
   render(createdNode, children)
 
-  signal(createdNode, 'mount')
+  signalEvent(createdNode, 'mount')
 }
 
 export default render

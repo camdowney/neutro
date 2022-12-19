@@ -53,9 +53,9 @@ render('body', { tag: 'div' })
 ```
 
 ### store()
-Component functions receive a custom "store" property by default. Render stores are similar to React's useState hook; they accept a default value and will trigger rerenders when modified. However, to negate the need for a separate setter function, stores return a single accessor object (inspired by SolidJS signals) for both updating and retrieving their values.
+Component functions receive a custom "store" property by default. Render stores are similar to React's useState hook; they accept a default value and will trigger re-renders when modified. However, to negate the need for a separate setter function, stores return a single accessor object (inspired by SolidJS signals) for both updating and retrieving their values.
 
-The below code creates a new store and initializes its value to 0. This value can then be accessed and incremented on the store object directly to trigger rerenders. Note that stores cannot be interacted with directly; the "value" property must be used.
+The below code creates a new store and initializes its value to 0. This value can then be accessed and incremented on the store object directly to trigger re-renders. Note that stores cannot be interacted with directly; the "value" property must be used.
 
 ```js
 export default function Component({ store }) {
