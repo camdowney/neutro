@@ -12,18 +12,16 @@
 <script type='module'>
   import render from './index.js'
 
-  const Counter = ({ store }) => {
+  render('body', ({ store }) => {
     const count = store(0)
 
     return {
-      r: 'button',
-      class: 'counter',
-      _click: () => count.value++,
-      c: `Counter: ${count.value}`,
+      r: 'section', c: {
+        r: 'button', class: 'counter', _click: () => count.value++, c:
+          `Counter: ${count.value}`
+      }
     }
-  }
-
-  render('body', { r: 'section', c: Counter })
+  })
 </script>
 
 <style>
