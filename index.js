@@ -51,15 +51,6 @@ const store = initial => {
   return accessor
 }
 
-const memo = (value, dependencies = []) => {
-  const key = `${currentID}-${storeID++}`
-
-  if (!storage[key] || storage[key].dependencies.some((stored, i) => stored !== dependencies[i]))
-    storage[key] = { value: value(), dependencies }
-
-  return storage[key].value
-}
-
 const render = (at, props, replace) => {
   if (!at || props === undefined)
     return
@@ -80,7 +71,7 @@ const render = (at, props, replace) => {
   if (isComponent) 
     storeID = 0
 
-  const nodeData = isComponent ? props?.r({ uid: '_' + currentID, store, memo, ...props }) : props
+  const nodeData = isComponent ? props?.r({ uid: '_' + currentID, store, ...props }) : props
   const isObject = typeof nodeData === 'object' && !Array.isArray(nodeData)
   const { c: children, ...atts } = isObject ? nodeData : { r: 'span', c: nodeData }
   

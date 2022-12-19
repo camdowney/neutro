@@ -59,29 +59,13 @@ Component functions receive a custom "store" property by default. Render stores 
 The below code creates a new store and initializes its value to 0. This value can then be accessed and incremented on the store object directly to trigger rerenders. Note that stores cannot be interacted with directly; the "value" property must be used.
 
 ```js
-export default function Counter({ store }) {
+export default function Component({ store }) {
   const count = store(0)
 
   return {
     _click: () => count.value++,
     c: count.value,
   }
-}
-```
-
-### memo
-Component functions additionally receive a custom "memo" property by default. Render memoization is analogous to React's; the memo function accepts as arguments a presumably expensive function to compute a value as well as an array of dependencies. Only when any of these dependencies change between rerenders will the computation be run again to retrieve an up-to-date value.
-
-#### Example
-The below code memoizes a value that is expensive to compute.
-
-```js
-export default function MemoComponent({ memo, value }) {
-  ...
-
-  const memoizedValue = memo(() => expensiveFunction(), [value])
-
-  ...
 }
 ```
 
@@ -92,7 +76,7 @@ Component functions additionally receive a UID by default. These may be used for
 The below example allows a component to query and interact with the HTML it outputs.
 
 ```js
-export default function UniqueComponent({ uid }) {
+export default function Component({ uid }) {
   const onMount = () => {
     const renderedElement = document.querySelector('#' + uid)
     console.log(renderedElement)
