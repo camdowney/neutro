@@ -1,5 +1,5 @@
 # Render
-Render is a ridiculously simple and lightweight way to integrate components into your vanilla JS application. No other tools are needed; simply create component functions and return their data in object format.
+Render is a ridiculously simple and lightweight way to integrate components into your vanilla JS application. No other tools are needed; simply create component functions and render them to HTML.
 
 ## Example Stateful Component
 ```js
@@ -7,7 +7,7 @@ export default function Counter({ store }) {
   const count = store(0)
 
   return {
-    r: 'div', // "r" stands for "rendered element" and may be a tag or component function
+    r: 'button', // "r" stands for "rendered element" and may be a tag or component function
     class: 'counter',
     _click: () => count.value++,
     c: [ // "c" stands for "children" and may be an array, component function, object, or HTML
@@ -63,6 +63,7 @@ export default function Component({ store }) {
   const count = store(0)
 
   return {
+    r: 'button',
     _click: () => count.value++,
     c: count.value,
   }
@@ -92,8 +93,6 @@ export default function Component({ uid }) {
 
 ### Event listeners
 Event listeners may be added to elements by appending the target event name with an underscore (_).
-
-More documentation coming soon.
 
 ### Window listeners
 Window listeners may be managed by appending the target event name with two underscores (__).
