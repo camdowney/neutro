@@ -50,27 +50,6 @@ const store = initial => {
   }
 }
 
-const store2 = initial => {
-  const uid = currentID
-  const key = `${uid}-${storeID++}`
-
-  if (!storage[key])
-    storage[key] = initial
-
-  const accessor = {
-    set: value => {
-      storage[key] = typeof value === 'function' ? value(storage[key]) : value
-  
-      currentID = uid
-      render(...components[uid], true)
-      currentID = components.length
-    },
-    get: () => storage[key],
-  }
-
-  return accessor
-}
-
 const render = (at, props, replace) => {
   if (!at || props === undefined)
     return
