@@ -10,7 +10,7 @@ export default function Counter({ store }) {
     tag: 'button',
     class: 'counter',
     _click: () => count.value++,
-    c: { // short for "children" or "content"
+    c: { // short for "child", "children", or "content"
       tag: 'p', 
       c: count.value
     },
@@ -44,7 +44,7 @@ import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
 ## Documentation
 
 ### render()
-The render function accepts two primary arguments: an origin and the node(s) to render. An origin may either be an element or a string that can be used to query an element. Nodes may be represented as a function, object, plain HTML, or an array containing any combination of these types.
+The render function accepts two primary arguments: an origin and the node(s) to render. An origin may either be an element or a string that can be used to query an element. Nodes may be represented as a function, object, plain HTML in string format, or an array containing any combination of these types.
 
 The below code appends an empty div to the body of an HTML document.
 
