@@ -70,7 +70,7 @@ export default function Component({ store }) {
 ```
 
 ### uid
-Component functions additionally receive a UID by default. These may be used for maintaining unique components, such as by using them in query aggregation.
+Component functions additionally receive a UID by default. These may be used for maintaining unique components, such as by using them in query aggregation. Note that the component must mount (render to HTML) before it can be accessed through queries.
 
 The below code allows a component to query and interact with the HTML it outputs.
 
@@ -90,11 +90,39 @@ export default function Component({ uid }) {
 ```
 
 ### Event listeners
-Event listeners may be added to elements by appending the target event name with an underscore (_).
+Event listeners may be added to elements by appending the target event name with an underscore (_). Any standard events may be used; additionally, Render exposes two events for handling component lifecycle: "mount" and "unmount".
+
+The below code alerts the browser when the component (an empty div) has mounted.
+
+```js
+export default function Component() {
+  const onMount = () => {
+    console.log(renderedElement)
+  }
+
+  return {
+    tag: 'div',
+    _mount: onMount,
+  }
+}
+```
 
 ### Window listeners
-Window listeners may be managed by appending the target event name with two underscores (__).
+Window listeners may be managed by appending the target event name with two underscores (__). This functionality may be compared to React's useEffect hook, although window listeners in Render take care of the cleanup for you.
 
-More documentation coming soon.
+The below code adds an event listener to the window when it mounts. If the component unmounts (as a result of a re-render), the listener will be removed automatically.
+
+```js
+export default function Component() {
+  const onKeydown = e => {
+    console.log(e.key)
+  }
+
+  return {
+    tag: 'div',
+    __keydown: onKeydown,
+  }
+}
+```
 
 View a more complete example implementation [here](https://github.com/camdowney/word-engine).
