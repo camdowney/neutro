@@ -124,7 +124,7 @@ const render = (target, nodeData, replace) => {
     ? cleanData
     : { tag: 'span', c: cleanData }
   
-  // Data manipulation complete; begin render and return single rendered element
+  // Data manipulation complete; render single element then append any children before mounting
   let createdNode = null
 
   if (replace) {
