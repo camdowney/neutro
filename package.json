@@ -1,7 +1,7 @@
 {
   "name": "render",
   "author": "@camdowney",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A ridiculously simple way to integrate components into your vanilla JS application—no other tools needed.",
   "keywords": [
     "javascript"
