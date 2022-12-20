@@ -126,4 +126,4 @@ export default function Component() {
 ```
 
 ## Example Implementations
-* [Word Engine](https://github.com/camdowney/word-engine).
+* [Word Engine](https://github.com/camdowney/word-engine)
