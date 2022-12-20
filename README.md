@@ -72,7 +72,7 @@ export default function Component({ store }) {
 ### uid
 Component functions additionally receive a UID by default. These may be used for maintaining unique components, such as by using them in query aggregation. Note that components must mount (render to HTML) before their output can be accessed through queries.
 
-The below code allows a component to query and interact with the HTML it outputs.
+The below code queries the element that is rendered when the component mounts.
 
 ```js
 export default function Component({ uid }) {
