@@ -97,7 +97,7 @@ The below code alerts the browser when the component (an empty div) has mounted.
 ```js
 export default function Component() {
   const onMount = () => {
-    console.log(renderedElement)
+    console.log('Mount complete!')
   }
 
   return {
