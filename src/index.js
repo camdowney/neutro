@@ -141,7 +141,7 @@ const render = (target, nodeData, replace) => {
   }
 
   if (isComponent)
-    components[currentID++] = [createdNode, props]
+    components[currentID++] = [createdNode, nodeData]
 
   render(createdNode, children)
 
