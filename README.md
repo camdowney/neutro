@@ -1,5 +1,5 @@
 # Render
-Render is a ridiculously simple and lightweight way to integrate components into your vanilla JS application. No other tools are needed—simply create component functions and render them to HTML.
+Render is a ridiculously simple and lightweight way to integrate components into your vanilla JS application. No other tools are needed—HTML is written in object format which allows it to be modularized and rendered directly to your HTML.
 
 ## Example Stateful Component
 ```js
