@@ -52,7 +52,7 @@ let components = []
 // Used by stores for data persistence
 let storage = {}
 
-// Allows components to receive UIDs and identifies groups of stores per component
+// Identifies unique components
 let currentID = 0
 
 // Identifies stores within a component
