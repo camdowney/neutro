@@ -46,7 +46,7 @@ import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
 ### render()
 The render function accepts two primary arguments: an origin and the node(s) to render. An origin may either be an element or a string that can be used to query an element. Nodes may be represented as a function, object, plain HTML in string format, or an array containing any combination of these types.
 
-The below code appends an empty div to the body of an HTML document.
+The below code appends an empty div to the body of an HTML document. Note that the tag property may either be a standard HTML tag or a component function. Omitting the tag property entirely will default the element to a span.
 
 ```js
 render('body', { tag: 'div' })
@@ -72,7 +72,7 @@ export default function Component({ store }) {
 ### uid
 Component functions additionally receive a UID by default. These may be used for maintaining unique components, such as by using them in query aggregation. Note that components must mount (render to HTML) before their output can be accessed through queries.
 
-The below code queries the element that is rendered when the component mounts.
+The below code queries the div that is rendered when the component mounts.
 
 ```js
 export default function Component({ uid }) {
@@ -92,12 +92,12 @@ export default function Component({ uid }) {
 ### Event listeners
 Event listeners may be added to elements by appending the target event name with a single underscore (_). Any standard events may be used; additionally, Render exposes two events for handling component lifecycle: "mount" and "unmount".
 
-The below code alerts the browser when the component (an empty div) has mounted.
+The below code alerts the browser when the component has mounted.
 
 ```js
 export default function Component() {
   const onMount = () => {
-    console.log('Mount complete!')
+    alert('Mount complete!')
   }
 
   return {
