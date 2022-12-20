@@ -1,50 +1,4 @@
-/**
- * Dispatches a simple event to a target element
- * @param {Element} target Target element
- * @param {string} eventName Name of event to be dispatched
- * @returns {void}
- */
-const signalEvent = (target, eventName) => {
-  target.dispatchEvent(new Event(eventName))
-}
-
-/**
- * Creates an element with attribute and event listener properties as desired
- * @param {{ tag: string, ...props: any[] }} params
- * @param tag Element tag
- * @param props Element data such as attributes and listeners
- * @returns {Element} Created element
- */
-const createElement = ({ tag, ...props }) => {
-  let effects = {}
-  let listeners = {}
-  let atts = {}
-
-  Object.entries(props).forEach(([key, value]) => 
-    key.startsWith('__') 
-      ? effects[key.substring(2)] = value 
-      : key.startsWith('_') 
-        ? listeners[key.substring(1)] = value 
-        : atts[key] = value
-  )
-
-  const newNode = document.createElement(tag || 'div')
-
-  Object.entries(atts).forEach(([att, value]) => 
-    newNode.setAttribute(att.replaceAll('_', '-'), value)
-  )
-
-  const addEvent = listener => newNode.addEventListener(...listener)
-
-  Object.entries(effects).forEach(effect => {
-    addEvent(['mount', () => window.addEventListener(...effect)])
-    addEvent(['unmount', () => window.removeEventListener(...effect)])
-  })
-
-  Object.entries(listeners).forEach(addEvent)
-
-  return newNode
-}
+import createElement from './createElement.js'
 
 // Keeps track of component data for re-rendering
 let components = []
@@ -57,6 +11,16 @@ let currentID = 0
 
 // Identifies stores within a component
 let storeID = 0
+
+/**
+ * Dispatches a simple event to a target element
+ * @param {Element} target Target element
+ * @param {string} eventName Name of event to be dispatched
+ * @returns {void}
+ */
+const signalEvent = (target, eventName) => {
+  target.dispatchEvent(new Event(eventName))
+}
 
 /**
  * Used at top-level of components to maintain state while triggering re-renders; may be interacted with through value property
