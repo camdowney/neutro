@@ -125,7 +125,7 @@ const render = (target, nodeData, replace) => {
     : { tag: 'span', c: cleanData }
   
   // Data manipulation complete; render single element then append any children before mounting
-  let createdNode = null
+  let createdElement = null
 
   if (replace) {
     const parent = origin.parentNode
@@ -135,18 +135,18 @@ const render = (target, nodeData, replace) => {
     origin.querySelectorAll('*').forEach(child => signalEvent(child, 'unmount'))
 
     parent.replaceChild(createElement(atts), origin)
-    createdNode = parent.children[index]
+    createdElement = parent.children[index]
   }
   else {
     origin.append(createElement(atts))
-    createdNode = origin.lastChild
+    createdElement = origin.lastChild
   }
 
   if (isComponent)
-    components[currentID++] = [createdNode, nodeData]
+    components[currentID++] = [createdElement, nodeData]
 
-  render(createdNode, children)
-  signalEvent(createdNode, 'mount')
+  render(createdElement, children)
+  signalEvent(createdElement, 'mount')
 }
 
 export default render
