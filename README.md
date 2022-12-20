@@ -20,7 +20,7 @@ export default function Counter({ store }) {
 
 ## Rendering to HTML
 ```js
-import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
+import render from 'https://cdn.jsdelivr.net/gh/camdowney/render@latest/min.js'
 import Counter from './components/Counter.js'
 
 render('body', [
@@ -38,7 +38,7 @@ render('body', [
 To get started, just add the below line into your JS wherever you plan on using Render.
 
 ```js
-import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
+import render from 'https://cdn.jsdelivr.net/gh/camdowney/render@latest/min.js'
 ```
 
 ## Documentation
