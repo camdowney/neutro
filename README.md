@@ -34,7 +34,7 @@ render('body', [
 ])
 ```
 
-## Adding to your project
+## Adding Render to Your Project
 To get started, just add the below line into your JS wherever you plan on using Render.
 
 ```js
