@@ -11,8 +11,8 @@ const signalEvent = (target, eventName) => {
 /**
  * Creates an element with attribute and event listener properties as desired
  * @param {{ tag: string, ...props: any[] }} params
- * @param {string} tag Element tag
- * @param {any[]} props Element data such as attributes and listeners
+ * @param tag Element tag
+ * @param props Element data such as attributes and listeners
  * @returns {Element} Created element
  */
 const createElement = ({ tag, ...props }) => {
@@ -46,10 +46,10 @@ const createElement = ({ tag, ...props }) => {
   return newNode
 }
 
-// Keeps track of component data between re-renders
+// Keeps track of component data for re-rendering
 let components = []
 
-// Used by stores
+// Used by stores for data persistence
 let storage = {}
 
 // Allows components to receive UIDs and identifies groups of stores per component
@@ -72,7 +72,7 @@ const store = initialValue => {
 
   return {
     set value(newValue) {
-      storage[key] = typeof newValue === 'function' ? newValue(storage[key]) : newValue
+      storage[key] = newValue
   
       currentID = uid
       render(...components[uid], true)
@@ -95,9 +95,9 @@ const render = (target, nodeData, replace) => {
   if (!target || nodeData === undefined)
     return
 
-  const origin = typeof target !== 'string' 
-    ? target
-    : document?.querySelector(target)
+  const origin = typeof target === 'string' 
+    ? document?.querySelector(target)
+    : target
 
   if (typeof nodeData === 'function')
     return render(origin, { tag: nodeData }, replace)
@@ -108,6 +108,7 @@ const render = (target, nodeData, replace) => {
   if (typeof nodeData !== 'object')
     return origin.innerHTML += nodeData
 
+  // Node data is confirmed Object at this point; now convert to usable format
   const isComponent = typeof nodeData?.tag === 'function'
 
   if (isComponent) 
@@ -123,6 +124,7 @@ const render = (target, nodeData, replace) => {
     ? cleanData
     : { tag: 'span', c: cleanData }
   
+  // Data manipulation complete; begin render and return single rendered element
   let createdNode = null
 
   if (replace) {
@@ -144,7 +146,6 @@ const render = (target, nodeData, replace) => {
     components[currentID++] = [createdNode, nodeData]
 
   render(createdNode, children)
-
   signalEvent(createdNode, 'mount')
 }
 
