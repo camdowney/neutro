@@ -23,32 +23,6 @@ const signalEvent = (target, eventName) => {
 }
 
 /**
- * Used at top-level of components to maintain state while triggering re-renders; may be interacted with through value property
- * @param {any} initialValue Initial value of store
- * @returns {{ value: any }} Store value accessor
- */
-const store = initialValue => {
-  const uid = currentID
-  const key = `${uid}-${storeID++}`
-
-  if (!storage[key])
-    storage[key] = initialValue
-
-  return {
-    set value(newValue) {
-      storage[key] = newValue
-  
-      currentID = uid
-      render(...components[uid], true)
-      currentID = components.length
-    },
-    get value() {
-      return storage[key]
-    }
-  }
-}
-
-/**
  * Converts node representations to actual nodes and appends output to (or replaces) target element
  * @param {Element|string} target Element (or element query) to render node(s) at
  * @param {{}|[]|Function|string} nodeData Representation of node(s) to render
@@ -72,23 +46,64 @@ const render = (target, nodeData, replace) => {
   if (typeof nodeData !== 'object')
     return origin.innerHTML += nodeData
 
-  // Node data is confirmed Object at this point; now convert to usable format
+  /**
+   * Begin component functions; make copy of currentID since it will be incremented later
+   */
+  const cid = currentID
+
+  /**
+   * Accessed after mount to expose the element that a component renders; may be interacted with through the value property
+   * @returns {{ value: any }} Element value accessor
+   */
+  const ref = { 
+    get value() {
+      return components[cid][0]
+    }
+  }
+
+  /**
+   * Used at top-level of components to maintain state while triggering re-renders; may be interacted with through the value property
+   * @param {any} initialValue Initial value of store
+   * @returns {{ value: any }} Store value accessor
+   */
+  const store = initialValue => {
+    const key = cid + '-' + storeID++
+
+    storage[key] = storage[key] ?? initialValue
+
+    return {
+      set value(newValue) {
+        storage[key] = newValue
+    
+        currentID = cid
+        render(...components[cid], true)
+        currentID = components.length
+      },
+      get value() {
+        return storage[key]
+      }
+    }
+  }
+
+  /**
+   * Node data is confirmed Object at this point; now convert to usable format
+   */
   const isComponent = typeof nodeData?.tag === 'function'
 
   if (isComponent) 
     storeID = 0
 
   const cleanData = isComponent
-    ? nodeData?.tag({ uid: '_' + currentID, store, ...nodeData })
+    ? nodeData?.tag({ ref, store, ...nodeData })
     : nodeData
 
-  const isObject = typeof cleanData === 'object' && !Array.isArray(cleanData)
-
-  const { c: children, ...atts } = isObject 
-    ? cleanData
-    : { tag: 'span', c: cleanData }
+  const { c: children, ...atts } = (typeof cleanData !== 'object' || Array.isArray(cleanData)) 
+    ? { tag: 'span', c: cleanData }
+    : cleanData
   
-  // Data manipulation complete; render single element then append any children before mounting
+  /**
+   * Data manipulation complete; render single element then append any children before mounting
+   */
   let createdElement = null
 
   if (replace) {

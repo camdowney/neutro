@@ -12,16 +12,34 @@
 <script type='module'>
   import render from '../src/index.js'
 
-  render('body', ({ store }) => {
+  const Counter = ({ ref, store }) => {
     const count = store(0)
 
+    const _mount = () =>
+      console.log(ref.value)
+
+    const _click = () =>
+      count.value++
+
+    const __keydown = e =>
+      console.log(e.key)
+
     return {
-      tag: 'section', c: {
-        tag: 'button', class: 'counter', _click: () => count.value++, c:
-          `Counter: ${count.value}`
-      }
+      tag: 'button', class: 'counter', _click, c:
+        { _mount, __keydown, c: `Counter: ${count.value}` }
     }
-  })
+  }
+
+  const start = performance.now()
+
+  render('body', () => ({
+    tag: 'section', c: [
+      Counter,
+      Counter,
+    ]
+  }))
+
+  console.log(performance.now() - start)
 </script>
 
 <style>
@@ -37,6 +55,8 @@
   }
 
   section {
+    display: flex;
+    gap: 1rem;
     padding: 2rem;
   }
 

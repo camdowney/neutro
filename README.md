@@ -46,7 +46,7 @@ import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
 ### render()
 The render function accepts two primary arguments: an origin and the node(s) to render. An origin may either be an element or a string that can be used to query an element. Nodes may be represented as a function, object, plain HTML in string format, or an array containing any combination of these types.
 
-The below code appends an empty div to the body of an HTML document. Note that the tag property may either be a standard HTML tag or a component function. Omitting the tag property entirely will default the element to a span.
+The below code appends an empty div to the body of an HTML document. Note that the tag property may either be a standard HTML tag or a component function.
 
 ```js
 render('body', { tag: 'div' })
@@ -69,22 +69,21 @@ export default function Component({ store }) {
 }
 ```
 
-### uid
-Component functions additionally receive a UID by default. These may be used for maintaining unique components, such as by using them in query aggregation. Note that components must mount (render to HTML) before their output can be accessed through queries.
+### ref
+Component functions additionally receive a reference to their root element by default. References allow components to directly interact with the markup they generate. Note that reference values are only available after components mount (render to HTML). And just as with stores, references must be accessed through their "value" property.
 
-The below code queries the div that is rendered when the component mounts.
+The below code logs the div that is rendered when the component mounts.
 
 ```js
-export default function Component({ uid }) {
-  const onMount = () => {
-    const renderedElement = document.querySelector('#' + uid)
+export default function Component({ ref }) {
+  const _mount = () => {
+    const renderedElement = ref.value
     console.log(renderedElement)
   }
 
   return {
     tag: 'div',
-    id: uid,
-    _mount: onMount,
+    _mount,
   }
 }
 ```
@@ -122,6 +121,67 @@ export default function Component() {
     tag: 'div',
     __keydown: onKeydown,
   }
+}
+```
+
+## Rules of Render
+
+### Rendering elements vs. components
+The "tag" property dictates whether an object renders a standard element or a component. When a standard HTML tag is specified, any other properties of the object are applied directly to that element. This may include regular attributes or even event listeners. When a component is specified, however, any other properties of the object will be sent as parameters to the function of that component.
+
+Tags may also be omitted from objects entirely, in which case a div will be rendered.
+
+```js
+  // This:
+  const exampleElement = { class: 'example-class', c: 'Content' }
+
+  // Becomes this:
+  <div class='example-class'>Content</div>
+
+```
+
+### Component return values
+Components *always* render a single root element, even if one is not specified. Dealing in single elements allows Render to greatly simplify the process of handling re-renders and references. Since the below component returns an array of elements, Render will automatically wrap its return value in a span before outputting to HTML.
+
+```js
+// In component:
+...
+return [
+  { tag: 'div', c: 'Content 1' }
+  { tag: 'div', c: 'Content 2' }
+  { tag: 'div', c: 'Content 3' }
+]
+
+// Rendered HTML:
+<span>
+  <div>Content 1</div>
+  <div>Content 2</div>
+  <div>Content 3</div>
+</span>
+```
+
+While this can be problematic in some cases, this quirk will often go unnoticed and may be easily written around.
+
+### Using stores
+Just like hooks in React, Render stores must be used at the top level of components (never within conditions). This is because their values are preserved by their order within the component. If a store is accessed during one render but not another, the indexing of that component's stores will be offset by 1.
+
+```js
+export default function Component() {
+  // Do this
+  const store1 = store(10)
+
+  // Or even this
+  const store2 = exampleCondition ? store(3) : store(0)
+
+  // But NOT this...
+  if (exampleCondition) {
+    const store3 = store(25)
+  }
+
+  // ...because if exampleCondition ever became false, store4 would adopt store3's value.
+  const store4 = store(12)
+
+  ...
 }
 ```
 
