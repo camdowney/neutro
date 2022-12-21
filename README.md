@@ -169,13 +169,13 @@ Just like hooks in React, Render stores must be used at the top level of compone
 
 ```js
 export default function Component() {
-  // Do this
+  // Do this...
   const store1 = store(10)
 
-  // Or even this
+  // ...or even this...
   const store2 = exampleCondition ? store(3) : store(0)
 
-  // But NOT this...
+  // ...but NOT this...
   if (exampleCondition) {
     const store3 = store(25)
   }
