@@ -168,7 +168,7 @@ While this can be problematic in some cases, this quirk will often go unnoticed 
 Just like hooks in React, Render stores must be used at the top level of components (never within conditions). This is because their values are preserved by their order within the component. If a store is accessed during one render but not another, the indexing of that component's stores will be offset by 1.
 
 ```js
-export default function Component() {
+export default function Component({ exampleCondition }) {
   // Do this...
   const store1 = store('abc')
 
