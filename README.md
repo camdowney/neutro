@@ -132,12 +132,13 @@ The "tag" property dictates whether an object renders a standard element or a co
 Tags may also be omitted from objects entirely, in which case a div will be rendered.
 
 ```js
-  // This:
+  // In script:
   const exampleElement = { class: 'example-class', c: 'Content' }
+```
 
-  // Becomes this:
+```html
+  <!-- Rendered HTML: -->
   <div class='example-class'>Content</div>
-
 ```
 
 ### Component return values
@@ -145,14 +146,15 @@ Components *always* render a single root element, even if one is not specified. 
 
 ```js
 // In component:
-...
 return [
   { tag: 'div', c: 'Content 1' }
   { tag: 'div', c: 'Content 2' }
   { tag: 'div', c: 'Content 3' }
 ]
+```
 
-// Rendered HTML:
+```html
+<!-- Rendered HTML: -->
 <span>
   <div>Content 1</div>
   <div>Content 2</div>
