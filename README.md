@@ -1,6 +1,8 @@
 # Render
 Render is a ridiculously simple and lightweight way to integrate stateful components into your vanilla JS application. No other tools are needed—markup is written in object format which allows it to be modularized and rendered directly to your HTML.
 
+*Render is a work-in-progress; expect bugs and breaking changes with each release*
+
 ## Example Stateful Component
 ```js
 export default function Counter({ store }) {
@@ -68,21 +70,22 @@ export default function Component({ store }) {
 }
 ```
 
-### ref
-Component functions additionally receive a reference to their root element by default. References allow components to directly interact with the markup they generate. Note that reference values are only available after components mount (render to HTML). And just as with stores, references must be accessed through their "value" property.
+### get()
+Component functions additionally receive a custom "get" function by default. Calling get() will return a reference to the component's root element upon mount. This effectively allows components to interact with the HTML they generate. Note that get() must only be called after the component has mounted, similar to accessing the "current" property of an element-bound useRef() hook in React.
 
-The below code logs the div that is rendered when the component mounts.
+The below code logs the div that the component renders.
 
 ```js
-export default function Component({ ref }) {
+export default function Component({ get }) {
   const _mount = () => {
-    const renderedElement = ref.value
-    console.log(renderedElement)
+    const renderedDiv = get()
+    console.log(renderedDiv) // Logs: <div>Hello world!</div>
   }
 
   return {
     tag: 'div',
     _mount,
+    c: 'Hello world!'
   }
 }
 ```

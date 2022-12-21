@@ -52,16 +52,6 @@ const render = (target, nodeData, replace) => {
   const cid = currentID
 
   /**
-   * Accessed after mount to expose the element that a component renders; may be interacted with through the value property
-   * @returns {{ value: any }} Element value accessor
-   */
-  const ref = { 
-    get value() {
-      return components[cid][0]
-    }
-  }
-
-  /**
    * Used at top-level of components to maintain state while triggering re-renders; may be interacted with through the value property
    * @param {any} initialValue Initial value of store
    * @returns {{ value: any }} Store value accessor
@@ -94,7 +84,7 @@ const render = (target, nodeData, replace) => {
     storeID = 0
 
   const cleanData = isComponent
-    ? nodeData?.tag({ ref, store, ...nodeData })
+    ? nodeData?.tag({ get: () => components[cid][0], store, ...nodeData })
     : nodeData
 
   const { c: children, ...atts } = (typeof cleanData !== 'object' || Array.isArray(cleanData)) 

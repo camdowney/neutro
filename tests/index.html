@@ -12,14 +12,21 @@
 <script type='module'>
   import render from '../src/index.js'
 
-  const Counter = ({ ref, store }) => {
+  const Counter = ({ get, store }) => {
     const count = store(0)
+
+    const _mount = () =>
+      console.log(get())
 
     const _click = () =>
       count.value++
 
     return {
-      tag: 'button', class: 'counter', _click, c: `Counter: ${count.value}`
+      tag: 'button',
+      class: 'counter',
+      _mount,
+      _click,
+      c: `Counter: ${count.value}`
     }
   }
 
