@@ -130,12 +130,12 @@ The "tag" property dictates whether an object renders a standard element or a co
 Tags may also be omitted from objects entirely, in which case a div will be rendered.
 
 ```js
-  // In script:
-  const exampleElement = { class: 'example-class', c: 'Content' }
+  // In script
+  render('body', { class: 'example-class', c: 'Content' })
 ```
 
 ```html
-  <!-- Rendered HTML: -->
+  <!-- Rendered HTML -->
   <div class='example-class'>Content</div>
 ```
 
@@ -143,7 +143,7 @@ Tags may also be omitted from objects entirely, in which case a div will be rend
 Components *always* render a single root element, even if one is not specified. Dealing in single elements allows Render to greatly simplify the process of handling re-renders and references. Since the below component returns an array of elements, Render will automatically wrap its return value in a span before outputting to HTML.
 
 ```js
-// In component:
+// In component
 return [
   { tag: 'div', c: 'Content 1' }
   { tag: 'div', c: 'Content 2' }
@@ -152,7 +152,7 @@ return [
 ```
 
 ```html
-<!-- Rendered HTML: -->
+<!-- Rendered HTML -->
 <span>
   <div>Content 1</div>
   <div>Content 2</div>
