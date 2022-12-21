@@ -170,18 +170,18 @@ Just like hooks in React, Render stores must be used at the top level of compone
 ```js
 export default function Component() {
   // Do this...
-  const store1 = store(10)
+  const store1 = store('abc')
 
   // ...or even this...
-  const store2 = exampleCondition ? store(3) : store(0)
+  const store2 = exampleCondition ? store('def') : store('ghi')
 
   // ...but NOT this...
   if (exampleCondition) {
-    const store3 = store(25)
+    const store3 = store('jkl')
   }
 
   // ...because if exampleCondition ever became false, store4 would adopt store3's value.
-  const store4 = store(12)
+  const store4 = store('mno')
 
   ...
 }
