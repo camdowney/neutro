@@ -42,7 +42,6 @@ import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
 ```
 
 ## Documentation
-
 ### render()
 The render function accepts two primary arguments: an origin and the node(s) to render. An origin may either be an element or a string that can be used to query an element. Nodes may be represented as a function, object, plain HTML in string format, or an array containing any combination of these types.
 
@@ -125,7 +124,6 @@ export default function Component() {
 ```
 
 ## Rules of Render
-
 ### Rendering elements vs. components
 The "tag" property dictates whether an object renders a standard element or a component. When a standard HTML tag is specified, any other properties of the object are applied directly to that element. This may include regular attributes or even event listeners. When a component is specified, however, any other properties of the object will be sent as parameters to the function of that component.
 
