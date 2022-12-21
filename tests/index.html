@@ -15,18 +15,11 @@
   const Counter = ({ ref, store }) => {
     const count = store(0)
 
-    const _mount = () =>
-      console.log(ref.value)
-
     const _click = () =>
       count.value++
 
-    const __keydown = e =>
-      console.log(e.key)
-
     return {
-      tag: 'button', class: 'counter', _click, c:
-        { _mount, __keydown, c: `Counter: ${count.value}` }
+      tag: 'button', class: 'counter', _click, c: `Counter: ${count.value}`
     }
   }
 
@@ -34,8 +27,110 @@
 
   render('body', () => ({
     tag: 'section', c: [
-      Counter,
-      Counter,
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
+      Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, Counter, 
     ]
   }))
 
