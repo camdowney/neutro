@@ -76,7 +76,7 @@ const render = (target, nodeData, replace) => {
   }
 
   /**
-   * Node data is confirmed Object at this point; now convert to usable format
+   * Node data is confirmed Object at this point; convert to usable format
    */
   const isComponent = typeof nodeData?.tag === 'function'
 
@@ -92,7 +92,7 @@ const render = (target, nodeData, replace) => {
     : cleanData
   
   /**
-   * Data manipulation complete; render single element then append any children before mounting
+   * Data manipulation complete; render single element then append children
    */
   let createdElement = null
 
