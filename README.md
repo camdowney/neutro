@@ -70,15 +70,15 @@ export default function Component({ store }) {
 }
 ```
 
-### get()
-Component functions additionally receive a custom "get" function by default. Calling get() will return a reference to the component's root element upon mount. This effectively allows components to interact with the HTML they generate. Note that get() must only be called after the component has mounted, similar to accessing the "current" property of an element-bound useRef() hook in React.
+### ref()
+Component functions additionally receive a custom "ref" property by default. Calling ref() will return a reference to the component's root element upon mount, effectively allowing the component to interact with the HTML it generates. Note that ref() must only be called after the component has mounted.
 
 The below code logs the div that the component renders.
 
 ```js
-export default function Component({ get }) {
+export default function Component({ ref }) {
   const _mount = () => {
-    const renderedDiv = get()
+    const renderedDiv = ref()
     console.log(renderedDiv) // Logs: <div>Hello world!</div>
   }
 

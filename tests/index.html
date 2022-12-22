@@ -12,11 +12,11 @@
 <script type='module'>
   import render from '../src/index.js'
 
-  const Counter = ({ get, store }) => {
+  const Counter = ({ ref, store }) => {
     const count = store(0)
 
     const _mount = () =>
-      console.log(get())
+      console.log(ref())
 
     const _click = () =>
       count.value++
