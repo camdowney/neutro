@@ -1,7 +1,7 @@
 # Render
 Render is a ridiculously simple and lightweight way to integrate stateful components into your vanilla JS application. No other tools are needed—markup is written in object format which allows it to be modularized and rendered directly to your HTML.
 
-*Render is a work-in-progress; expect bugs and breaking changes with each release*
+*Render is a work-in-progress; expect bugs and breaking changes with each release.*
 
 ## Example Stateful Component
 ```js
