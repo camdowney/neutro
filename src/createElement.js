@@ -21,7 +21,7 @@ const createElement = ({ tag, ...props }) => {
   const createdElement = document.createElement(tag || 'div')
 
   Object.entries(atts).forEach(([att, value]) => 
-    createdElement.setAttribute(att.replaceAll('_', '-'), value)
+    createdElement.setAttribute(att.replace(/_/g, '-'), value)
   )
 
   const addEvent = listener => createdElement.addEventListener(...listener)
