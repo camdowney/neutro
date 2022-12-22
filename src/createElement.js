@@ -15,14 +15,12 @@ const createElement = ({ tag, ...props }) => {
       ? effects[key.substring(2)] = value 
       : key.startsWith('_') 
         ? listeners[key.substring(1)] = value 
-        : atts[key] = value
-  )
+        : atts[key] = value)
 
   const createdElement = document.createElement(tag || 'div')
 
   Object.entries(atts).forEach(([att, value]) => 
-    createdElement.setAttribute(att.replace(/_/g, '-'), value)
-  )
+    createdElement.setAttribute(att.replace(/_/g, '-'), value))
 
   const addEvent = listener => createdElement.addEventListener(...listener)
 
