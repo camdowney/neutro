@@ -13,7 +13,7 @@ let storeID = 0
 let currentPath = [-1]
 
 /**
- * Helpers
+ * Shorthand helpers
  */
 const signalEvent = (target, eventName) =>
   target.dispatchEvent(new Event(eventName))
@@ -23,7 +23,7 @@ const signalEvent = (target, eventName) =>
  * @returns {string} Path string
  */
 const getPathString = () => 
-  'r' + currentPath.join('r')
+  'n' + currentPath.join('n')
 
 /**
  * Used at top-level of components to maintain state while triggering re-renders; may be interacted with through the value property
@@ -58,27 +58,23 @@ const store = initialValue => {
 
 /**
  * Converts node representations to actual nodes and appends output to (or replaces) target element
- * @param {Element|string} target Element (or element query) to render node(s) at
+ * @param {Element|string} target Element to render node(s) at
  * @param {{}|[]|Function|string} nodeData Representation of node(s) to render
  * @param {boolean} rerender Replaces target with rendered node(s) if true
  * @returns {void}
  */
 const render = (target, nodeData, rerender) => {
-  if (!target || nodeData === undefined)
+  if (!target?.nodeType || nodeData === undefined)
     return
 
-  const origin = typeof target === 'string' 
-    ? document?.querySelector(target)
-    : target
-
   if (typeof nodeData === 'function')
-    return render(origin, { tag: nodeData }, rerender)
+    return render(target, { tag: nodeData }, rerender)
 
   if (Array.isArray(nodeData))
-    return nodeData.forEach(node => render(origin, node))
+    return nodeData.forEach(node => render(target, node))
 
   /**
-   * Guards complete; register node in path
+   * Register node in path
    */
   currentPath[currentPath.length - 1]++
 
@@ -86,7 +82,7 @@ const render = (target, nodeData, rerender) => {
     return
 
   if (typeof nodeData !== 'object')
-    return origin.append(nodeData)
+    return target.append(nodeData)
 
   /**
    * Node data is confirmed Object at this point; convert to usable format
@@ -111,18 +107,18 @@ const render = (target, nodeData, rerender) => {
   let createdElement = null
 
   if (rerender) {
-    const parent = origin.parentNode
-    const index = [...parent.children].indexOf(origin)
+    const parent = target.parentNode
+    const index = [...parent.children].indexOf(target)
 
-    signalEvent(origin, 'unmount')
-    origin.querySelectorAll('*').forEach(child => signalEvent(child, 'unmount'))
+    signalEvent(target, 'unmount')
+    target.querySelectorAll('*').forEach(child => signalEvent(child, 'unmount'))
 
-    parent.replaceChild(createElement(atts), origin)
+    parent.replaceChild(createElement(atts), target)
     createdElement = parent.children[index]
   }
   else {
-    origin.append(createElement(atts))
-    createdElement = origin.lastChild
+    target.append(createElement(atts))
+    createdElement = target.lastChild
   }
 
   if (isComponent)

@@ -25,7 +25,7 @@ export default function Counter({ store }) {
 import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
 import Counter from './components/Counter.js'
 
-render('body', [
+render(document.body, [
   { tag: 'header' },
   { tag: 'main', c: [
     { tag: 'section', class: 'counter-section', c:
@@ -37,7 +37,7 @@ render('body', [
 ```
 
 ## Adding Render to Your Project
-To get started, just add the below line into your JS wherever you plan on using Render.
+To get started, just add the below import wherever you plan on using Render.
 
 ```js
 import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
@@ -45,12 +45,12 @@ import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
 
 ## Documentation
 ### render()
-The render function accepts two primary arguments: an origin and the node(s) to render. An origin may either be an element or a string that can be used to query an element. Nodes may be represented as a function, object, plain HTML in string format, or an array containing any combination of these types. Note that render() should only be called once per page, at the root of where you wish to begin implementing reactive data (generally the 'body' element).
+The render function accepts two primary arguments: a target element and the node(s) to render. Nodes may be represented as a function, object, plain HTML in string format, or an array containing any combination of these types. Note that render() should only be called once per page, at the root of where you wish to begin implementing reactive data (generally the 'body' element).
 
 The below code appends an empty div to the body of an HTML document. Note that the tag property may either be a standard HTML tag or a component function.
 
 ```js
-render('body', { tag: 'div' })
+render(document.body, { tag: 'div' })
 ```
 
 ### store()
@@ -134,7 +134,7 @@ Tags may also be omitted from objects entirely, in which case a div will be rend
 
 ```js
   // In script
-  render('body', { class: 'example-class', c: 'Content' })
+  render(document.body, { class: 'example-class', c: 'Content' })
 ```
 
 ```html

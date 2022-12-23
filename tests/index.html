@@ -46,7 +46,7 @@
 
   const start = performance.now()
 
-  render('body', ({ store }) => {
+  render(document.body, ({ store }) => {
     const test = store(0)
 
     return {
