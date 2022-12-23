@@ -34,14 +34,14 @@ const getPathString = () =>
  * @returns {{ value: any }} Store value accessor
  */
 const store = initialValue => {
-  const path = [...currentPath]
+  const tempPath = [...currentPath]
   const key = getPathString()
   const storeKey = key + 's' + storeID++
 
   storage[storeKey] = storage[storeKey] ?? initialValue
 
   const signal = () => {
-    currentPath = [...path]
+    currentPath = [...tempPath]
     currentPath[currentPath.length - 1]--
 
     render(...components[key], true)
@@ -100,7 +100,7 @@ const render = (target, nodeData, rerender) => {
     ? nodeData.tag({ ref: () => components[key][0], store, ...nodeData })
     : nodeData
 
-  const { c: children, ...atts } = (typeof cleanData !== 'object' || Array.isArray(cleanData)) 
+  const { c: children, ...atts } = Array.isArray(cleanData)
     ? { tag: 'span', c: cleanData }
     : cleanData
   
@@ -127,13 +127,13 @@ const render = (target, nodeData, rerender) => {
   if (isComponent)
     components[key] = [createdElement, nodeData]
   
-  const copy = [...currentPath]
+  const tempPath = [...currentPath]
   currentPath.push(-1)
 
   render(createdElement, children)
   signalEvent(createdElement, 'mount')
 
-  currentPath = [...copy]
+  currentPath = [...tempPath]
 }
 
 export default render

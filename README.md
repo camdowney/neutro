@@ -12,7 +12,7 @@ export default function Counter({ store }) {
     tag: 'button',
     class: 'counter',
     _click: () => count.value++,
-    c: { // short for 'child', 'children', or 'content'
+    c: { // short for 'children' or 'content'
       tag: 'p', 
       c: count.value
     },
@@ -45,16 +45,16 @@ import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
 
 ## Documentation
 ### render()
-The render function accepts two primary arguments: a target element and the node(s) to render. Nodes may be represented as a function, object, plain HTML in string format, or an array containing any combination of these types. Note that render() should only be called once per page, at the root of where you wish to begin implementing reactive data (generally the 'body' element).
+The render function accepts two primary arguments: a target element and the node(s) to render. Nodes may be represented as components (functions), objects, text content, or arrays containing any combination of these types. Note that render() should only be called once per page, at the root of where you wish to begin implementing reactive data (generally the 'body' element).
 
-The below code appends an empty div to the body of an HTML document. Note that the tag property may either be a standard HTML tag or a component function.
+The below code appends an empty div (object format) to the body of an HTML document. Note that the 'tag' property may either be a standard HTML tag or a component name.
 
 ```js
 render(document.body, { tag: 'div' })
 ```
 
 ### store()
-Component functions receive a custom 'store' property by default. Render stores are similar to React's useState hook—they accept a default value and will trigger re-renders when modified. However, to negate the need for a separate setter function, stores return a single accessor object (inspired by SolidJS signals) for both updating and retrieving their values. And for changes that do not automatically trigger re-renders (those pesky arrays!), stores contain a "signal" function that will force one.
+Components receive a custom 'store' property by default. Render stores are similar to React's useState hook—they accept a default value and will trigger re-renders when modified. However, to negate the need for a separate setter function, stores return a single accessor object (inspired by SolidJS signals) for both updating and retrieving their values. And for changes that do not automatically trigger re-renders (those pesky arrays!), stores contain a "signal" function that will force one.
 
 The below code creates a new store and initializes its value to 0. This value can then be accessed and updated to trigger re-renders. Note that stores must be interacted with through their 'value' property.
 
@@ -71,7 +71,7 @@ export default function Component({ store }) {
 ```
 
 ### ref()
-Component functions additionally receive a custom 'ref' property by default. Calling ref() will return a reference to the component's root element upon mount, effectively allowing the component to interact with the HTML it generates. Note that ref() must only be called after the component has mounted.
+Components additionally receive a custom 'ref' property by default. Calling ref() will return a reference to the component's root element upon mount, effectively allowing the component to interact with the HTML it generates. Note that ref() must only be called after the component has mounted.
 
 The below code logs the div that the component renders.
 
@@ -143,7 +143,7 @@ Tags may also be omitted from objects entirely, in which case a div will be rend
 ```
 
 ### Component return values
-Components *always* render a single root element, even if one is not specified. Dealing in single elements allows Render to greatly simplify the process of handling re-renders and references. Since the below component returns an array of elements, Render will automatically wrap its return value in a span before outputting to HTML.
+Components may only return a single object or array, and in the latter case the array of nodes will be wrapped in a 'span'. Dealing in single elements allows Render to greatly simplify the process of handling re-renders and references.
 
 ```js
 // In component
