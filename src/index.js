@@ -1,16 +1,11 @@
 import createElement from './createElement.js'
 
-// Keeps track of component data for re-rendering
-let components = []
-
-// Used by stores for data persistence
+let components = {}
 let storage = {}
-
-// Identifies unique components
-let currentID = 0
-
-// Identifies stores within a component
 let storeID = 0
+
+let currentPath = ''
+let currentIndex = 0
 
 /**
  * Dispatches a simple event to a target element
@@ -28,15 +23,17 @@ const signalEvent = (target, eventName) => {
  * @returns {{ value: any }} Store value accessor
  */
 const store = initialValue => {
-  const cid = currentID
-  const key = cid + '-' + storeID++
+  const path = currentPath
+  const index = currentIndex
+  const key = path + '-' + index + '-' + storeID++
 
   storage[key] = storage[key] ?? initialValue
 
   const signal = () => {
-    currentID = cid
+    currentPath = path
+    currentIndex = index
     render(...components[cid], true)
-    currentID = components.length
+    // currentID = components.length
   }
 
   return {
@@ -55,14 +52,11 @@ const store = initialValue => {
  * Converts node representations to actual nodes and appends output to (or replaces) target element
  * @param {Element|string} target Element (or element query) to render node(s) at
  * @param {{}|[]|Function|string} nodeData Representation of node(s) to render
- * @param {boolean} replace Replaces target with rendered node(s) if true; used for re-renders only
+ * @param {boolean} rerender Replaces target with rendered node(s) if true
  * @returns {void}
  */
-const render = (target, nodeData, replace) => {
+const render = (target, nodeData, rerender) => {
   if (!target || nodeData === undefined)
-    return
-
-  if (nodeData === null || nodeData === false)
     return
 
   const origin = typeof target === 'string' 
@@ -70,19 +64,26 @@ const render = (target, nodeData, replace) => {
     : target
 
   if (typeof nodeData === 'function')
-    return render(origin, { tag: nodeData }, replace)
+    return render(origin, { tag: nodeData }, rerender)
 
   if (Array.isArray(nodeData))
     return nodeData.forEach(node => render(origin, node))
 
-  if (typeof nodeData !== 'object')
-    return origin.appendChild(document.createTextNode(nodeData))
+  if (nodeData === null || nodeData === false) {
+    currentIndex++
+    return
+  }
+
+  if (typeof nodeData !== 'object') {
+    currentIndex++
+    return origin.append(nodeData)
+  }
 
   /**
    * Node data is confirmed Object at this point; convert to usable format
    */
   const isComponent = typeof nodeData?.tag === 'function'
-  const cid = currentID
+  const cid = currentIndex
 
   if (isComponent) 
     storeID = 0
@@ -100,7 +101,7 @@ const render = (target, nodeData, replace) => {
    */
   let createdElement = null
 
-  if (replace) {
+  if (rerender) {
     const parent = origin.parentNode
     const index = [...parent.children].indexOf(origin)
 
@@ -115,10 +116,18 @@ const render = (target, nodeData, replace) => {
     createdElement = origin.lastChild
   }
 
+  console.log(createdElement, currentPath, currentIndex)
+
   if (isComponent)
-    components[currentID++] = [createdElement, nodeData]
+    components[currentIndex] = [createdElement, nodeData]
+  
+  currentPath += '-' + currentIndex
 
   render(createdElement, children)
+
+  currentPath = currentPath.split('-').slice(0, -1).join('-')
+  currentIndex++
+
   signalEvent(createdElement, 'mount')
 }
 
