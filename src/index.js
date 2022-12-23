@@ -94,7 +94,7 @@ const render = (target, nodeData, rerender) => {
     storeID = 0
 
   const cleanData = isComponent
-    ? nodeData?.tag({ ref: () => components[key][0], store, ...nodeData })
+    ? nodeData.tag({ ref: () => components[key][0], store, ...nodeData })
     : nodeData
 
   const { c: children, ...atts } = (typeof cleanData !== 'object' || Array.isArray(cleanData)) 
