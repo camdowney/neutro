@@ -12,6 +12,19 @@
 <script type='module'>
   import render from '../src/index.js'
 
+  const Indicator = ({ store }) => {
+    const count = store(0)
+
+    const _click = () =>
+      count.value++
+
+    return {
+      class: 'indicator',
+      _click,
+      c: count.value
+    }
+  }
+
   const Counter = ({ ref, store }) => {
     const count = store(0)
 
@@ -26,7 +39,11 @@
       class: 'counter',
       _mount,
       _click,
-      c: `Counter: ${count.value}`
+      c: [
+        `Counter: ${count.value}`,
+        Indicator,
+        Indicator,
+      ]
     }
   }
 
@@ -74,4 +91,18 @@
   .counter:hover {
     background-color: #2a2a2a;
   }
+
+  .indicator {
+    position: relative;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 9999px;
+    background-color: #f72435;
+    z-index: 100;
+  }
+
+  .indicator:hover {
+    background-color: #4424f7;
+  }
+
 </style>
