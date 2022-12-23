@@ -44,7 +44,7 @@ const render = (target, nodeData, replace) => {
     return nodeData.forEach(node => render(origin, node))
 
   if (typeof nodeData !== 'object')
-    return origin.innerHTML += nodeData
+    return origin.appendChild(document.createTextNode(nodeData))
 
   /**
    * Begin component functions; make copy of currentID since it will be incremented later

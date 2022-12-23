@@ -28,26 +28,21 @@
   const Counter = ({ ref, store }) => {
     const count = store(0)
 
-    const _mount = () =>
-      console.log(ref())
-
     const _click = () =>
       count.value++
 
     return {
       tag: 'button',
       class: 'counter',
-      _mount,
       _click,
       c: [
         `Counter: ${count.value}`,
+        count.value % 2 === 0 && Indicator,
         Indicator,
-        Indicator,
+        0,
       ]
     }
   }
-
-  const start = performance.now()
 
   render('body', () => ({
     tag: 'section', c: [
@@ -55,8 +50,6 @@
       Counter,
     ]
   }))
-
-  console.log(performance.now() - start)
 </script>
 
 <style>
