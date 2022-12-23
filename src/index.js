@@ -4,8 +4,7 @@ let components = {}
 let storage = {}
 let storeID = 0
 
-let currentPath = ''
-let currentIndex = 0
+let currentPath = [-1]
 
 /**
  * Dispatches a simple event to a target element
@@ -17,6 +16,9 @@ const signalEvent = (target, eventName) => {
   target.dispatchEvent(new Event(eventName))
 }
 
+const getPathString = () =>
+  '_' + currentPath.join('_')
+
 /**
  * Used at top-level of components to maintain state while triggering re-renders; may be interacted with through the value property
  * @param {any} initialValue Initial value of store
@@ -24,15 +26,14 @@ const signalEvent = (target, eventName) => {
  */
 const store = initialValue => {
   const path = currentPath
-  const index = currentIndex
-  const key = path + '-' + index + '-' + storeID++
+  const key = getPathString() + '_' + storeID++
 
   storage[key] = storage[key] ?? initialValue
 
   const signal = () => {
+    console.log(components, key)
     currentPath = path
-    currentIndex = index
-    render(...components[cid], true)
+    render(...components[key], true)
     // currentID = components.length
   }
 
@@ -69,27 +70,28 @@ const render = (target, nodeData, rerender) => {
   if (Array.isArray(nodeData))
     return nodeData.forEach(node => render(origin, node))
 
-  if (nodeData === null || nodeData === false) {
-    currentIndex++
-    return
-  }
+  /**
+   * Guards complete; register node in path
+   */
+  currentPath[currentPath.length - 1]++
 
-  if (typeof nodeData !== 'object') {
-    currentIndex++
+  if (nodeData === null || nodeData === false)
+    return
+
+  if (typeof nodeData !== 'object')
     return origin.append(nodeData)
-  }
 
   /**
    * Node data is confirmed Object at this point; convert to usable format
    */
   const isComponent = typeof nodeData?.tag === 'function'
-  const cid = currentIndex
+  const key = currentPath.join('-')
 
   if (isComponent) 
     storeID = 0
 
   const cleanData = isComponent
-    ? nodeData?.tag({ ref: () => components[cid][0], store, ...nodeData })
+    ? nodeData?.tag({ ref: () => components[key][0], store, ...nodeData })
     : nodeData
 
   const { c: children, ...atts } = (typeof cleanData !== 'object' || Array.isArray(cleanData)) 
@@ -116,17 +118,17 @@ const render = (target, nodeData, rerender) => {
     createdElement = origin.lastChild
   }
 
-  console.log(createdElement, currentPath, currentIndex)
+  console.log(createdElement, currentPath)
 
   if (isComponent)
-    components[currentIndex] = [createdElement, nodeData]
+    components[getPathString()] = [createdElement, nodeData]
   
-  currentPath += '-' + currentIndex
+  const copy = [...currentPath]
+  currentPath.push(-1)
 
   render(createdElement, children)
 
-  currentPath = currentPath.split('-').slice(0, -1).join('-')
-  currentIndex++
+  currentPath = copy
 
   signalEvent(createdElement, 'mount')
 }
