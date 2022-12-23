@@ -109,9 +109,9 @@ export default function Component() {
 ```
 
 ### Window listeners
-Window listeners may be managed by appending the target event name with two underscores (__). This functionality may be compared to React's useEffect hook, although window listeners in Render take care of the cleanup for you.
+Window listeners may be managed by appending the target event name with two underscores (__). This functionality overlaps a bit with how React's useEffect hook may be used, although window listeners in Render take care of the cleanup for you.
 
-The below code adds an event listener to the window when it mounts. If the component unmounts (as a result of a re-render), the listener will be removed automatically before mounting again.
+The below code adds a 'keydown' event listener to the window upon mount. If the component unmounts (as a result of a re-render), the listener will be removed automatically before mounting again.
 
 ```js
 export default function Component() {
