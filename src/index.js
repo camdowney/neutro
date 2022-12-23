@@ -13,7 +13,10 @@ let storeID = 0
 let currentPath = [-1]
 
 /**
- * Shorthand helpers
+ * Dispatches a simple event to a target element
+ * @param {Element} target Target element
+ * @param {string} eventName Name of event
+ * @returns {void}
  */
 const signalEvent = (target, eventName) =>
   target.dispatchEvent(new Event(eventName))
