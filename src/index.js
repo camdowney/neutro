@@ -23,6 +23,35 @@ const signalEvent = (target, eventName) => {
 }
 
 /**
+ * Used at top-level of components to maintain state while triggering re-renders; may be interacted with through the value property
+ * @param {any} initialValue Initial value of store
+ * @returns {{ value: any }} Store value accessor
+ */
+const store = initialValue => {
+  const cid = currentID
+  const key = cid + '-' + storeID++
+
+  storage[key] = storage[key] ?? initialValue
+
+  const signal = () => {
+    currentID = cid
+    render(...components[cid], true)
+    currentID = components.length
+  }
+
+  return {
+    set value(newValue) {
+      storage[key] = newValue
+      signal()
+    },
+    get value() {
+      return storage[key]
+    },
+    signal,
+  }
+}
+
+/**
  * Converts node representations to actual nodes and appends output to (or replaces) target element
  * @param {Element|string} target Element (or element query) to render node(s) at
  * @param {{}|[]|Function|string} nodeData Representation of node(s) to render
@@ -31,6 +60,9 @@ const signalEvent = (target, eventName) => {
  */
 const render = (target, nodeData, replace) => {
   if (!target || nodeData === undefined)
+    return
+
+  if (nodeData === null || nodeData === false)
     return
 
   const origin = typeof target === 'string' 
@@ -47,38 +79,10 @@ const render = (target, nodeData, replace) => {
     return origin.appendChild(document.createTextNode(nodeData))
 
   /**
-   * Begin component functions; make copy of currentID since it will be incremented later
-   */
-  const cid = currentID
-
-  /**
-   * Used at top-level of components to maintain state while triggering re-renders; may be interacted with through the value property
-   * @param {any} initialValue Initial value of store
-   * @returns {{ value: any }} Store value accessor
-   */
-  const store = initialValue => {
-    const key = cid + '-' + storeID++
-
-    storage[key] = storage[key] ?? initialValue
-
-    return {
-      set value(newValue) {
-        storage[key] = newValue
-    
-        currentID = cid
-        render(...components[cid], true)
-        currentID = components.length
-      },
-      get value() {
-        return storage[key]
-      }
-    }
-  }
-
-  /**
    * Node data is confirmed Object at this point; convert to usable format
    */
   const isComponent = typeof nodeData?.tag === 'function'
+  const cid = currentID
 
   if (isComponent) 
     storeID = 0
