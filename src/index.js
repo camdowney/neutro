@@ -1,23 +1,29 @@
 import createElement from './createElement.js'
 
+// Tracks component data for re-rendering
 let components = {}
+
+// Tracks all store data
 let storage = {}
+
+// Tracks current store within component
 let storeID = 0
 
+// Tracks path of most recently rendered node
 let currentPath = [-1]
 
 /**
- * Dispatches a simple event to a target element
- * @param {Element} target Target element
- * @param {string} eventName Name of event to be dispatched
- * @returns {void}
+ * Helpers
  */
-const signalEvent = (target, eventName) => {
+const signalEvent = (target, eventName) =>
   target.dispatchEvent(new Event(eventName))
-}
 
-const getPathString = () =>
-  '_' + currentPath.join('_')
+/**
+ * Returns the current node path as a string; for use as key
+ * @returns {string} Path string
+ */
+const getPathString = () => 
+  'r' + currentPath.join('r')
 
 /**
  * Used at top-level of components to maintain state while triggering re-renders; may be interacted with through the value property
@@ -25,25 +31,26 @@ const getPathString = () =>
  * @returns {{ value: any }} Store value accessor
  */
 const store = initialValue => {
-  const path = currentPath
-  const key = getPathString() + '_' + storeID++
+  const path = [...currentPath]
+  const key = getPathString()
+  const storeKey = key + 's' + storeID++
 
-  storage[key] = storage[key] ?? initialValue
+  storage[storeKey] = storage[storeKey] ?? initialValue
 
   const signal = () => {
-    console.log(components, key)
-    currentPath = path
+    currentPath = [...path]
+    currentPath[currentPath.length - 1]--
+
     render(...components[key], true)
-    // currentID = components.length
   }
 
   return {
     set value(newValue) {
-      storage[key] = newValue
+      storage[storeKey] = newValue
       signal()
     },
     get value() {
-      return storage[key]
+      return storage[storeKey]
     },
     signal,
   }
@@ -85,7 +92,7 @@ const render = (target, nodeData, rerender) => {
    * Node data is confirmed Object at this point; convert to usable format
    */
   const isComponent = typeof nodeData?.tag === 'function'
-  const key = currentPath.join('-')
+  const key = getPathString()
 
   if (isComponent) 
     storeID = 0
@@ -118,19 +125,16 @@ const render = (target, nodeData, rerender) => {
     createdElement = origin.lastChild
   }
 
-  console.log(createdElement, currentPath)
-
   if (isComponent)
-    components[getPathString()] = [createdElement, nodeData]
+    components[key] = [createdElement, nodeData]
   
   const copy = [...currentPath]
   currentPath.push(-1)
 
   render(createdElement, children)
-
-  currentPath = copy
-
   signalEvent(createdElement, 'mount')
+
+  currentPath = [...copy]
 }
 
 export default render

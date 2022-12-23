@@ -36,20 +36,26 @@
       class: 'counter',
       _click,
       c: [
-        `Counter: ${count.value}`,
+        `Counter: ${count.value} `,
         count.value % 2 === 0 && Indicator,
-        Indicator,
         0,
+        Indicator,
       ]
     }
   }
 
-  render('body', {
-    tag: 'section', c: [
-      Counter,
-      Counter,
-    ]
+  const start = performance.now()
+
+  render('body', ({ store }) => {
+    const test = store(0)
+
+    return {
+      tag: 'section', _click: () => test.signal(), c:
+        [...Array(1000)].map(() => Counter)
+    }
   })
+
+  console.log(performance.now() - start)
 </script>
 
 <style>
@@ -97,5 +103,4 @@
   .indicator:hover {
     background-color: #4424f7;
   }
-
 </style>
