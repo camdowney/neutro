@@ -5,7 +5,7 @@
  * @param props Element data such as attributes and listeners
  * @returns {Element} Created element
  */
-const createElement = ({ tag, ...props }) => {
+const createElement = ({ tag, html, ...props }) => {
   let effects = {}
   let listeners = {}
   let atts = {}
@@ -20,6 +20,9 @@ const createElement = ({ tag, ...props }) => {
           : atts[key] = value)
 
   const createdElement = document.createElement(tag || 'div')
+
+  if (html)
+    createdElement.innerHTML = html
 
   Object.entries(atts).forEach(([att, value]) => 
     createdElement.setAttribute(att.replace(/_/g, '-'), value))

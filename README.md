@@ -37,7 +37,7 @@ render(document.body, [
 ```
 
 ## Adding Render to Your Project
-To get started, just add the below import wherever you plan on using Render.
+Render is available through [jsDelivr](https://www.jsdelivr.com/).
 
 ```js
 import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
@@ -47,16 +47,16 @@ import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
 ### render()
 The render function accepts two primary arguments: a target element and the node(s) to render. Nodes may be represented as components (functions), objects, text content, or arrays containing any combination of these types. Note that render() should only be called once per page, at the root of where you wish to begin implementing reactive data (generally the 'body' element).
 
-The below code appends an empty div (object format) to the body of an HTML document. Note that the 'tag' property may either be a standard HTML tag or a component name.
+The below code appends an empty div (object format) to the body of an HTML document. Note that the "tag" property may either be a standard HTML tag or a component name.
 
 ```js
 render(document.body, { tag: 'div' })
 ```
 
 ### store()
-Components receive a custom 'store' property by default. Render stores are similar to React's useState hook—they accept a default value and will trigger re-renders when modified. However, to negate the need for a separate setter function, stores return a single accessor object (inspired by SolidJS signals) for both updating and retrieving their values. And for changes that do not automatically trigger re-renders (those pesky arrays!), stores contain a "signal" function that will force one.
+Components receive a custom "store" property by default. Render stores are similar to React's useState hook—they accept a default value and will trigger re-renders when modified. However, to negate the need for a separate setter function, stores return a single accessor object (inspired by SolidJS signals) for both updating and retrieving their values. And for changes that do not automatically trigger re-renders (those pesky arrays!), stores contain a "signal" function that will force one.
 
-The below code creates a new store and initializes its value to 0. This value can then be accessed and updated to trigger re-renders. Note that stores must be interacted with through their 'value' property.
+The below code creates a new store and initializes its value to 0. This value can then be accessed and updated to trigger re-renders. Note that stores must be interacted with through their "value" property.
 
 ```js
 export default function Component({ store }) {
@@ -71,7 +71,7 @@ export default function Component({ store }) {
 ```
 
 ### ref()
-Components additionally receive a custom 'ref' property by default. Calling ref() will return a reference to the component's root element upon mount, effectively allowing the component to interact with the HTML it generates. Note that ref() must only be called after the component has mounted.
+Components additionally receive a custom "ref" property by default. Calling ref() will return a reference to the component's root element upon mount, effectively allowing the component to interact with the HTML it generates. Note that ref() must only be called after the component has mounted.
 
 The below code logs the div that the component renders.
 
@@ -91,7 +91,7 @@ export default function Component({ ref }) {
 ```
 
 ### Event listeners
-Event listeners may be added to elements by appending the target event name with a single underscore (_). Any standard events may be used; additionally, Render exposes two events for handling component lifecycle: 'mount' and 'unmount'.
+Event listeners may be added to elements by appending the target event name with a single underscore (_). Any standard events may be used; additionally, Render exposes two events for handling component lifecycle: "mount" and "unmount".
 
 The below code alerts the browser when the component has mounted.
 
@@ -111,7 +111,7 @@ export default function Component() {
 ### Window listeners
 Window listeners may be managed by appending the target event name with two underscores (__). This functionality overlaps a bit with how React's useEffect hook may be used, although window listeners in Render take care of the cleanup for you.
 
-The below code adds a 'keydown' event listener to the window upon mount. If the component unmounts (as a result of a re-render), the listener will be removed automatically before mounting again.
+The below code adds a "keydown" event listener to the window upon mount. If the component unmounts (as a result of a re-render), the listener will be removed automatically before mounting again.
 
 ```js
 export default function Component() {
@@ -128,7 +128,7 @@ export default function Component() {
 
 ## Rules of Render
 ### Rendering elements vs. components
-The 'tag' property dictates whether an object renders a standard element or a component. When a standard HTML tag is specified, any other properties of the object are applied directly to that element. This may include regular attributes or even event listeners. When a component is specified, however, any other properties of the object will be sent as parameters to the function of that component.
+The "tag" property dictates whether an object renders a standard element or a component. When a standard HTML tag is specified, any other properties of the object are applied directly to that element. This may include regular attributes or even event listeners. When a component is specified, however, any other properties of the object will be sent as parameters to the function of that component.
 
 Tags may also be omitted from objects entirely, in which case a div will be rendered.
 
@@ -139,11 +139,11 @@ Tags may also be omitted from objects entirely, in which case a div will be rend
 
 ```html
   <!-- Rendered HTML -->
-  <div class='example-class'>Content</div>
+  <div class="example-class">Content</div>
 ```
 
 ### Component return values
-Components may only return a single object or array, and in the latter case the array of nodes will be wrapped in a 'span'. Dealing in single elements allows Render to greatly simplify the process of handling re-renders and references.
+Components may only return a single object or array, and in the latter case the array of nodes will be wrapped in a "span" element. Dealing in single elements allows Render to greatly simplify the process of handling re-renders and references.
 
 ```js
 // In component
@@ -184,6 +184,13 @@ export default function Component() {
 
   ...
 }
+```
+
+### Rendering plain HTML
+Programmatically inserting unescaped HTML onto the page can be dangerous (see [XSS](https://owasp.org/www-community/attacks/xss/)), but sometimes it's a necessity. While this should mostly be avoided, Render does provide an "html" property that allows you to set the innerHTML of an element.
+
+```js
+render(document.body, { tag: 'script', html: 'console.log("With great power...")' })
 ```
 
 ## Example Implementations
