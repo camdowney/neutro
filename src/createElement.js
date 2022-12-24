@@ -10,12 +10,14 @@ const createElement = ({ tag, ...props }) => {
   let listeners = {}
   let atts = {}
 
-  Object.entries(props).forEach(([key, value]) => 
-    key.startsWith('__') 
-      ? effects[key.substring(2)] = value 
-      : key.startsWith('_') 
-        ? listeners[key.substring(1)] = value 
-        : atts[key] = value)
+  Object.entries(props)
+    .filter(([_, value]) => value !== undefined)
+    .forEach(([key, value]) => 
+      key.startsWith('__') 
+        ? effects[key.substring(2)] = value 
+        : key.startsWith('_')
+          ? listeners[key.substring(1)] = value
+          : atts[key] = value)
 
   const createdElement = document.createElement(tag || 'div')
 
