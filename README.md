@@ -168,18 +168,18 @@ Just like hooks in React, Render stores must be used at the top level of compone
 
 ```js
 export default function Component() {
-  // Do this...
+  // Do this
   const store1 = store('value1')
 
-  // ...or even this...
+  // or even this
   const store2 = exampleCondition ? store('value2a') : store('value2b')
 
-  // ...but NOT this...
+  // but NOT this
   if (exampleCondition) {
     const store3 = store('value3')
   }
 
-  // ...because if exampleCondition ever became false, store3 wouldn't activate and store4 would adopt its value.
+  // because if store3 doesn't activate, store4 would adopt its value.
   const store4 = store('value4')
 
   ...
@@ -190,7 +190,10 @@ export default function Component() {
 Programmatically inserting unescaped HTML onto the page can be dangerous (see [XSS](https://owasp.org/www-community/attacks/xss/)), but sometimes it's a necessity. While this should mostly be avoided, Render does provide an "html" property that allows you to set the innerHTML of an element.
 
 ```js
-render(document.body, { tag: 'script', html: 'console.log("With great power...")' })
+render(document.body, { 
+  tag: 'script',
+  html: 'console.log("With great power...")'
+})
 ```
 
 ## Example Implementations
