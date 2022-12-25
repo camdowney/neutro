@@ -21,7 +21,7 @@ const createElement = ({ tag, html, ...props }) => {
 
   const createdElement = document.createElement(tag || 'div')
 
-  if (html)
+  if (html !== undefined)
     createdElement.innerHTML = html
 
   Object.entries(atts).forEach(([att, value]) => 

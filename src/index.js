@@ -1,8 +1,5 @@
 import createElement from './createElement.js'
 
-// Tracks component data for re-rendering
-let components = {}
-
 // Tracks all store data
 let storage = {}
 
@@ -27,37 +24,6 @@ const signalEvent = (target, eventName) =>
  */
 const getPathString = () => 
   'n' + currentPath.join('n')
-
-/**
- * Used at top-level of components to maintain state while triggering re-renders; may be interacted with through the value property
- * @param {any} initialValue Initial value of store
- * @returns {{ value: any }} Store value accessor
- */
-const store = initialValue => {
-  const tempPath = [...currentPath]
-  const key = getPathString()
-  const storeKey = key + 's' + storeID++
-
-  storage[storeKey] = storage[storeKey] ?? initialValue
-
-  const signal = () => {
-    currentPath = [...tempPath]
-    currentPath[currentPath.length - 1]--
-
-    render(...components[key], true)
-  }
-
-  return {
-    set value(newValue) {
-      storage[storeKey] = newValue
-      signal()
-    },
-    get value() {
-      return storage[storeKey]
-    },
-    signal,
-  }
-}
 
 /**
  * Converts node representations to actual nodes and appends output to (or replaces) target element
@@ -88,16 +54,50 @@ const render = (target, nodeData, rerender) => {
     return target.append(nodeData)
 
   /**
-   * Node data is confirmed Object at this point; convert to usable format
+   * Node data is confirmed Object at this point; setup store if component
    */
   const isComponent = typeof nodeData?.tag === 'function'
-  const key = getPathString()
+  let createdElement = null
 
   if (isComponent) 
     storeID = 0
 
+  /**
+   * Used at top-level of components to maintain state while triggering re-renders; may be interacted with through the value property
+   * @param {any} initialValue Initial value of store
+   * @returns {{ value: any }} Store value accessor
+   */
+  const store = initialValue => {
+    const tempPath = [...currentPath]
+    const key = getPathString()
+    const storeKey = key + 's' + storeID++
+
+    storage[storeKey] = storage[storeKey] ?? initialValue
+
+    const signal = () => {
+      currentPath = [...tempPath]
+      currentPath[currentPath.length - 1]--
+
+      render(createdElement, nodeData, true)
+    }
+
+    return {
+      set value(newValue) {
+        storage[storeKey] = newValue
+        signal()
+      },
+      get value() {
+        return storage[storeKey]
+      },
+      signal,
+    }
+  }
+
+  /**
+   * Convert node data to usable format
+   */
   const cleanData = isComponent
-    ? nodeData.tag({ ref: () => components[key][0], store, ...nodeData })
+    ? nodeData.tag({ ref: () => createdElement, store, ...nodeData })
     : nodeData
 
   const { c: children, ...atts } = Array.isArray(cleanData)
@@ -107,9 +107,11 @@ const render = (target, nodeData, rerender) => {
   /**
    * Data manipulation complete; render single element then append children
    */
-  let createdElement = null
-
-  if (rerender) {
+  if (!rerender) {
+    target.append(createElement(atts))
+    createdElement = target.lastChild
+  }
+  else {
     const parent = target.parentNode
     const index = [...parent.children].indexOf(target)
 
@@ -119,13 +121,6 @@ const render = (target, nodeData, rerender) => {
     parent.replaceChild(createElement(atts), target)
     createdElement = parent.children[index]
   }
-  else {
-    target.append(createElement(atts))
-    createdElement = target.lastChild
-  }
-
-  if (isComponent)
-    components[key] = [createdElement, nodeData]
   
   const tempPath = [...currentPath]
   currentPath.push(-1)

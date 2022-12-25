@@ -27,14 +27,21 @@
 
   const Counter = ({ ref, store }) => {
     const count = store(0)
+    const count2 = store(0)
 
     const _click = () =>
       count.value++
+
+    const __keydown = () => {
+      count2.value++
+      console.log(count2.value)
+    }
 
     return {
       tag: 'button',
       class: 'counter',
       _click,
+      // __keydown,
       c: [
         `Counter: ${count.value} `,
         count.value % 2 === 0 && Indicator,
