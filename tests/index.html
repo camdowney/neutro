@@ -47,13 +47,9 @@
 
   const start = performance.now()
 
-  render(document.body, ({ store }) => {
-    const test = store(0)
-
-    return {
-      tag: 'section', _click: () => test.signal(), c:
-        [...Array(1000)].map(() => Counter)
-    }
+  render(document.body, {
+    tag: 'section', c:
+      [...Array(1000)].map(() => Counter)
   })
 
   console.log(performance.now() - start)
