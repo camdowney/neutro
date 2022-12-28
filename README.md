@@ -12,7 +12,7 @@ export default function Counter({ store }) {
     tag: 'button',
     class: 'counter',
     _click: () => count.value++,
-    c: { // short for 'children' or 'content'
+    c: { // short for "children" or "content"
       tag: 'p', 
       c: count.value
     },
@@ -45,7 +45,7 @@ import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
 
 ## Documentation
 ### render()
-The render function accepts two primary arguments: a target element and the node(s) to render. Nodes may be represented as components (functions), objects, text content, or arrays containing any combination of these types. Note that render() should only be called once per page, at the root of where you wish to begin implementing reactive data (generally the 'body' element).
+The render function accepts two primary arguments: a target element and the node(s) to render. Nodes may be represented as components (functions), objects, text content, or arrays containing any combination of these types. Note that render() should only be called once per page, at the root of where you wish to begin implementing reactive data (generally the "body" element).
 
 The below code appends an empty div (object format) to the body of an HTML document. Note that the "tag" property may either be a standard HTML tag or a component name.
 
@@ -65,7 +65,7 @@ export default function Component({ store }) {
   return {
     tag: 'button',
     _click: () => count.value++,
-    c: count.value,
+    c: count.value
   }
 }
 ```
@@ -134,7 +134,10 @@ Tags may also be omitted from objects entirely, in which case a div will be rend
 
 ```js
   // In script
-  render(document.body, { class: 'example-class', c: 'Content' })
+  render(document.body, {
+    class: 'example-class',
+    c: 'Content'
+  })
 ```
 
 ```html
