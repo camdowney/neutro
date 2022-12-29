@@ -22,7 +22,7 @@ export default function Counter({ store }) {
 
 ## Rendering to HTML
 ```js
-import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
+import render from 'https://cdn.jsdelivr.net/npm/neutro/min.js'
 import Counter from './components/Counter.js'
 
 render(document.body, [
@@ -37,10 +37,16 @@ render(document.body, [
 ```
 
 ## Adding Neutro to Your Project
-Neutro is available through [jsDelivr](https://www.jsdelivr.com/).
+Neutro may be installed through a package manager or imported through [jsDelivr](https://www.jsdelivr.com/).
 
+npm
+```
+npm i neutro
+```
+
+jsDelivr
 ```js
-import render from 'https://cdn.jsdelivr.net/gh/camdowney/render/min.js'
+import render from 'https://cdn.jsdelivr.net/npm/neutro/min.js'
 ```
 
 ## Documentation
