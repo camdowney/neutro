@@ -1,8 +1,8 @@
 {
-  "name": "render",
+  "name": "neutro",
   "author": "@camdowney",
   "version": "1.1.2",
-  "description": "A ridiculously simple and lightweight solution for integrating components into your JS application—no other tools needed.",
+  "description": "Simple and lightweight solution for integrating components into your JS application—no other tools needed.",
   "keywords": [
     "javascript"
   ],

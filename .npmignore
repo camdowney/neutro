@@ -1,0 +1,6 @@
+src/
+tests/
+.npmignore
+*.yaml
+.gitignore
+rollup.config.json
