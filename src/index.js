@@ -46,7 +46,7 @@ const render = (target, nodeData, rerender) => {
   /**
    * Node data is confirmed Object at this point; setup store if component
    */
-  let createdElement = null
+  let createdElement
   let partitionID = 0
 
   /**
@@ -60,6 +60,9 @@ const render = (target, nodeData, rerender) => {
 
     storage[partitionKey] = storage[partitionKey] ?? initialValue
 
+    /**
+     * Triggers re-render when called
+     */
     const flag = () => {
       currentPath = tempPath.slice(0)
       currentPath[currentPath.length - 1]--
@@ -93,11 +96,7 @@ const render = (target, nodeData, rerender) => {
   /**
    * Data manipulation complete; render single element then append children
    */
-  if (!rerender) {
-    target.append(createElement(atts))
-    createdElement = target.lastChild
-  }
-  else {
+  if (rerender) {
     const parent = target.parentNode
     const index = [...parent.children].indexOf(target)
 
@@ -106,6 +105,10 @@ const render = (target, nodeData, rerender) => {
 
     parent.replaceChild(createElement(atts), target)
     createdElement = parent.children[index]
+  }
+  else {
+    target.append(createElement(atts))
+    createdElement = target.lastChild
   }
   
   const tempPath = currentPath.slice(0)
