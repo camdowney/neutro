@@ -55,13 +55,13 @@ const render = (target, nodeData, rerender) => {
    * @returns {{ get: any }} Store value accessor
    */
   const store = initialValue => {
-    const tempPath = [...currentPath]
+    const tempPath = currentPath.slice(0)
     const partitionKey = 'n' + currentPath.join('n') + 'p' + partitionID++
 
     storage[partitionKey] = storage[partitionKey] ?? initialValue
 
     const flag = () => {
-      currentPath = [...tempPath]
+      currentPath = tempPath.slice(0)
       currentPath[currentPath.length - 1]--
 
       render(createdElement, nodeData, true)
@@ -108,13 +108,13 @@ const render = (target, nodeData, rerender) => {
     createdElement = parent.children[index]
   }
   
-  const tempPath = [...currentPath]
+  const tempPath = currentPath.slice(0)
   currentPath.push(-1)
 
   render(createdElement, children)
   signalEvent(createdElement, 'mount')
 
-  currentPath = [...tempPath]
+  currentPath = tempPath.slice(0)
 }
 
 export default render

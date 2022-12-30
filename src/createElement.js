@@ -13,19 +13,17 @@ const createElement = ({ tag, html, ...props }) => {
   Object.entries(props)
     .filter(([_, value]) => value !== undefined)
     .forEach(([key, value]) => 
-      key.startsWith('__') 
-        ? effects[key.substring(2)] = value 
-        : key.startsWith('_')
-          ? listeners[key.substring(1)] = value
-          : atts[key] = value)
+      key.startsWith('__') ? effects[key.substring(2)] = value 
+        : key.startsWith('_') ? listeners[key.substring(1)] = value 
+        : atts[key] = value
+    )
 
   const createdElement = document.createElement(tag || 'div')
 
   if (html !== undefined)
     createdElement.innerHTML = html
 
-  Object.entries(atts).forEach(([att, value]) => 
-    createdElement.setAttribute(att.replace(/_/g, '-'), value))
+  Object.entries(atts).forEach(att => createdElement.setAttribute(...att))
 
   const addEvent = listener => createdElement.addEventListener(...listener)
 

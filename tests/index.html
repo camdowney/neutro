@@ -43,7 +43,7 @@
     return {
       tag: 'button',
       class: 'counter',
-      _mount,
+      // _mount,
       _click,
       // __keydown,
       c: [
@@ -60,7 +60,7 @@
 
   render(document.body, {
     tag: 'section', c:
-      [...Array(100)].map(() => Counter)
+      [...Array(10000)].map(() => Counter)
   })
 
   console.log(performance.now() - start)
