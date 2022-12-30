@@ -11,10 +11,10 @@ export default function Counter({ store }) {
   return {
     tag: 'button',
     class: 'counter',
-    _click: () => count.value++,
+    _click: () => count.get++,
     c: { // short for "children" or "content"
       tag: 'p', 
-      c: count.value
+      c: count.get
     },
   }
 }
