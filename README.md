@@ -60,9 +60,9 @@ render(document.body, { tag: 'div' })
 ```
 
 ### store()
-Components receive a custom "store" property by default. Neutro stores are similar to React's useState hook—they accept a default value and will trigger re-renders when modified. However, to negate the need for a separate setter function, stores return a single accessor object (inspired by SolidJS signals) for both updating and retrieving their values. And for changes that do not automatically trigger re-renders (those pesky arrays!), stores contain a "signal" function that will force one.
+Components receive a custom "store" property by default. Neutro stores are similar to React's useState hook—they accept a default value and will trigger re-renders when modified. However, to negate the need for a separate setter function, stores return a single accessor object for both updating and retrieving their values. And for changes that wouldn't normally trigger re-renders, stores contain a "flag" function that will force one.
 
-The below code creates a new store and initializes its value to 0. This value can then be accessed and updated to trigger re-renders. Note that stores must be interacted with through their "value" property.
+The below code creates a new store and initializes its value to 0. This value can then be accessed and updated to trigger re-renders. Note that stores must be interacted with through their "get" property.
 
 ```js
 export default function Component({ store }) {
@@ -70,21 +70,21 @@ export default function Component({ store }) {
 
   return {
     tag: 'button',
-    _click: () => count.value++,
-    c: count.value
+    _click: () => count.get++,
+    c: count.get
   }
 }
 ```
 
-### ref()
-Components additionally receive a custom "ref" property by default. Calling ref() will return a reference to the component's root element upon mount, effectively allowing the component to interact with the HTML it generates. Note that ref() must only be called after the component has mounted.
+### self()
+Components additionally receive a custom "self" property by default. Calling self() will return the component's root element upon mount, effectively allowing the component to interact with the HTML it generates. Note that self() must only be called after the component has mounted.
 
 The below code logs the div that the component renders.
 
 ```js
-export default function Component({ ref }) {
+export default function Component({ self }) {
   const onMount = () => {
-    const renderedDiv = ref()
+    const renderedDiv = self()
     console.log(renderedDiv) // Logs: <div>Hello world!</div>
   }
 
@@ -152,7 +152,7 @@ Tags may also be omitted from objects entirely, in which case a div will be rend
 ```
 
 ### Component return values
-Components may only return a single object or array, and in the latter case the array of nodes will be wrapped in a "span" element. Dealing in single elements allows Neutro to greatly simplify the process of handling re-renders and references.
+Components always return a single root element, even if one is not specified. Components that provide an array return value, for example, will have their output wrapped in a "span" element. Doing so allows Neutro to greatly simplify the process of handling re-renders and self() calls.
 
 ```js
 // In component

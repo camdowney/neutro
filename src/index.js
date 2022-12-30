@@ -1,10 +1,7 @@
 import createElement from './createElement.js'
 
-// Tracks all store data
+// Persists all store data
 let storage = {}
-
-// Tracks current store within component
-let storeID = 0
 
 // Tracks path of most recently rendered node
 let currentPath = [-1]
@@ -17,13 +14,6 @@ let currentPath = [-1]
  */
 const signalEvent = (target, eventName) =>
   target.dispatchEvent(new Event(eventName))
-
-/**
- * Returns the current node path as a string; for use as key
- * @returns {string} Path string
- */
-const getPathString = () => 
-  'n' + currentPath.join('n')
 
 /**
  * Converts node representations to actual nodes and appends output to (or replaces) target element
@@ -56,25 +46,21 @@ const render = (target, nodeData, rerender) => {
   /**
    * Node data is confirmed Object at this point; setup store if component
    */
-  const isComponent = typeof nodeData?.tag === 'function'
   let createdElement = null
-
-  if (isComponent) 
-    storeID = 0
+  let partitionID = 0
 
   /**
-   * Used at top-level of components to maintain state while triggering re-renders; may be interacted with through the value property
+   * Used at top-level of components to maintain state while triggering re-renders
    * @param {any} initialValue Initial value of store
-   * @returns {{ value: any }} Store value accessor
+   * @returns {{ get: any }} Store value accessor
    */
   const store = initialValue => {
     const tempPath = [...currentPath]
-    const key = getPathString()
-    const storeKey = key + 's' + storeID++
+    const partitionKey = 'n' + currentPath.join('n') + 'p' + partitionID++
 
-    storage[storeKey] = storage[storeKey] ?? initialValue
+    storage[partitionKey] = storage[partitionKey] ?? initialValue
 
-    const signal = () => {
+    const flag = () => {
       currentPath = [...tempPath]
       currentPath[currentPath.length - 1]--
 
@@ -82,27 +68,27 @@ const render = (target, nodeData, rerender) => {
     }
 
     return {
-      set value(newValue) {
-        storage[storeKey] = newValue
-        signal()
+      set get(value) {
+        storage[partitionKey] = value
+        flag()
       },
-      get value() {
-        return storage[storeKey]
+      get get() {
+        return storage[partitionKey]
       },
-      signal,
+      flag,
     }
   }
 
   /**
    * Convert node data to usable format
    */
-  const cleanData = isComponent
-    ? nodeData.tag({ ref: () => createdElement, store, ...nodeData })
-    : nodeData
+  const cleanData = typeof nodeData?.tag === 'function'
+    ? nodeData.tag({ self: () => createdElement, store, ...nodeData }) // is component
+    : nodeData // is object
 
-  const { c: children, ...atts } = Array.isArray(cleanData)
-    ? { tag: 'span', c: cleanData }
-    : cleanData
+  const { c: children, ...atts } = cleanData?.constructor === Object
+    ? cleanData
+    : { tag: 'span', c: cleanData }
   
   /**
    * Data manipulation complete; render single element then append children

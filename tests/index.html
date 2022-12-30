@@ -16,35 +16,39 @@
     const count = store(0)
 
     const _click = () =>
-      count.value++
+      count.get++
 
     return {
       class: 'indicator',
       _click,
-      c: count.value
+      c: count.get
     }
   }
 
-  const Counter = ({ ref, store }) => {
+  const Counter = ({ self, store }) => {
     const count = store(0)
     const count2 = store(0)
 
+    const _mount = () =>
+      console.log(self().innerHTML)
+
     const _click = () =>
-      count.value++
+      count.get++
 
     const __keydown = () => {
-      count2.value++
-      console.log(count2.value)
+      count2.get++
+      console.log(count2.get)
     }
 
     return {
       tag: 'button',
       class: 'counter',
+      _mount,
       _click,
       // __keydown,
       c: [
-        `Counter: ${count.value} `,
-        count.value % 2 === 0 && Indicator,
+        `Counter: ${count.get} `,
+        count.get % 2 === 0 && Indicator,
         0,
         Indicator,
         { html: '&#128513;' }
@@ -56,7 +60,7 @@
 
   render(document.body, {
     tag: 'section', c:
-      [...Array(1000)].map(() => Counter)
+      [...Array(100)].map(() => Counter)
   })
 
   console.log(performance.now() - start)
