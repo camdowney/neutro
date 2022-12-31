@@ -104,7 +104,7 @@ The below code alerts the browser when the component has mounted.
 ```js
 export default function Component() {
   const onMount = () => {
-    alert('Mount complete!')
+    alert('Mounted!')
   }
 
   return {
@@ -223,5 +223,5 @@ render(document.body, {
 })
 ```
 
-## Example Implementations
+## Implementations
 * [Word Engine](https://github.com/camdowney/word-engine)
