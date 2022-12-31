@@ -31,7 +31,7 @@ render(document.body, [
     { tag: 'section', class: 'counter-section', c:
       { tag: Counter }
     },
-  ]},
+  ] },
   { tag: 'footer' },
 ])
 ```
