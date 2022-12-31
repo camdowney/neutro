@@ -60,26 +60,17 @@ const render = (target, nodeData, rerender) => {
 
     storage[partitionKey] = storage[partitionKey] ?? initialValue
 
-    /**
-     * Triggers re-render when called
-     */
-    const flag = () => {
-      currentPath = tempPath.slice(0)
-      currentPath[currentPath.length - 1]--
+    return value =>
+      value === undefined
+        ? storage[partitionKey]
+        : (
+          storage[partitionKey] = value,
 
-      render(createdElement, nodeData, true)
-    }
-
-    return {
-      set get(value) {
-        storage[partitionKey] = value
-        flag()
-      },
-      get get() {
-        return storage[partitionKey]
-      },
-      flag,
-    }
+          currentPath = tempPath.slice(0),
+          currentPath[currentPath.length - 1]--,
+    
+          render(createdElement, nodeData, true)
+        )
   }
 
   /**

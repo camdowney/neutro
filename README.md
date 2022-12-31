@@ -11,10 +11,10 @@ export default function Counter({ store }) {
   return {
     tag: 'button',
     class: 'counter',
-    _click: () => count.get++,
+    _click: () => count(count() + 1),
     c: { // short for "children" or "content"
       tag: 'p', 
-      c: count.get
+      c: count()
     },
   }
 }
@@ -60,9 +60,9 @@ render(document.body, { tag: 'div' })
 ```
 
 ### store()
-Components receive a custom "store" property by default. Neutro stores are similar to React's useState hook—they accept a default value and will trigger re-renders when modified. However, to negate the need for a separate setter function, stores return a single accessor object for both updating and retrieving their values. And for changes that wouldn't normally trigger re-renders, stores contain a "flag" function that will force one.
+Components receive a custom "store" property by default. Neutro stores are similar to React's useState hook—they accept a default value and will trigger re-renders when modified. However, to negate the need for a separate setter function, stores return a single accessor (inspired by [S.js](https://github.com/adamhaile/S)) for both updating and retrieving their values. Calling the accessor with no parameters will simply return the store's value, while passing in a new value will update it.
 
-The below code creates a new store and initializes its value to 0. This value can then be accessed and updated to trigger re-renders. Note that stores must be interacted with through their "get" property.
+The below code creates a new store and initializes its value to 0. Incrementing this value triggers a re-render in which the UI will update automatically to show its new value.
 
 ```js
 export default function Component({ store }) {
@@ -70,8 +70,8 @@ export default function Component({ store }) {
 
   return {
     tag: 'button',
-    _click: () => count.get++,
-    c: count.get
+    _click: () => count(count() + 1),
+    c: count()
   }
 }
 ```
