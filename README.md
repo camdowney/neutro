@@ -155,8 +155,7 @@ Tags may also be omitted from objects entirely, in which case a div will be rend
 Components always return a single root element, even if one is not specified. Components that provide an array return value, for example, will have their output wrapped in a "span" element. Doing so allows Neutro to greatly simplify the process of handling re-renders and self() calls.
 
 ```js
-// In component
-return [
+const Component = () => [
   { tag: 'div', c: 'Content 1' }
   { tag: 'div', c: 'Content 2' }
   { tag: 'div', c: 'Content 3' }
@@ -176,7 +175,7 @@ return [
 Just like hooks in React, Neutro stores must be used at the top level of components (never within conditions). This is because their values are preserved by their order within the component. If a store is accessed during one render but not another, the indexing of that component's stores will be offset by 1.
 
 ```js
-export default function Component() {
+export default function Component({ store }) {
   // Do this
   const store1 = store('value1')
 
@@ -190,6 +189,25 @@ export default function Component() {
 
   // because if store3 doesn't activate, store4 would adopt its value.
   const store4 = store('value4')
+
+  ...
+}
+```
+
+Aside from this, Neutro permits quite a bit of flexibility in handling stores. When dealing with non-primitives such as Objects and Arrays, it's perfectly valid to modify stores directly instead of passing in new values. However, keep in mind that doing so will not automatically trigger re-renders. This may be used to your advantage to improve code readability, but can also be great in scenarios in which triggering a re-render is actually unwanted.
+
+```js
+export default function Component({ store }) {
+  // Here, we use store() in a similar manner to useRef() in React
+  const refs = store({ value1: 123, value2: 456 })
+
+  const updateData = newValue => {
+    // This does not trigger a re-render
+    refs().value1 = newValue
+
+    // but if you want to force one, you can then set the store to itself
+    refs(refs())
+  }
 
   ...
 }
