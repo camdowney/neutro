@@ -83,7 +83,7 @@ The below code logs the div that the component renders.
 
 ```js
 export default function Component({ self }) {
-  const onMount = () => {
+  function onMount() {
     const renderedDiv = self()
     console.log(renderedDiv) // Logs: <div>Hello world!</div>
   }
@@ -103,7 +103,7 @@ The below code alerts the browser when the component has mounted.
 
 ```js
 export default function Component() {
-  const onMount = () => {
+  function onMount() {
     alert('Mounted!')
   }
 
@@ -121,7 +121,7 @@ The below code adds a "keydown" event listener to the window upon mount. If the 
 
 ```js
 export default function Component() {
-  const onKeydown = e => {
+  function onKeydown(e) {
     console.log(e.key)
   }
 
@@ -139,27 +139,30 @@ The "tag" property dictates whether an object renders a standard element or a co
 Tags may also be omitted from objects entirely, in which case a div will be rendered.
 
 ```js
-  // In script
-  render(document.body, {
-    class: 'example-class',
-    c: 'Content'
-  })
+// In script
+render(document.body, {
+  class: 'example-class',
+  c: 'Content'
+})
 ```
 
 ```html
-  <!-- Rendered HTML -->
-  <div class="example-class">Content</div>
+<!-- Rendered HTML -->
+<div class="example-class">Content</div>
 ```
 
 ### Component return values
 Components always return a single root element, even if one is not specified. Components that provide an array return value, for example, will have their output wrapped in a "span" element. Doing so allows Neutro to greatly simplify the process of handling re-renders and self() calls.
 
 ```js
-const Component = () => [
-  { tag: 'div', c: 'Content 1' }
-  { tag: 'div', c: 'Content 2' }
-  { tag: 'div', c: 'Content 3' }
-]
+// A named function is used here, but this also applies to unnamed/lambda functions
+export default function Component() {
+  return [
+    { tag: 'div', c: 'Content 1' }
+    { tag: 'div', c: 'Content 2' }
+    { tag: 'div', c: 'Content 3' }
+  ]
+}
 ```
 
 ```html
@@ -201,7 +204,7 @@ export default function Component({ store }) {
   // Here, we use store() in a similar manner to useRef() in React
   const refs = store({ value1: 123, value2: 456 })
 
-  const updateData = newValue => {
+  function updateData(newValue) {
     // This does not trigger a re-render
     refs().value1 = newValue
 
