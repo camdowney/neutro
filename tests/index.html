@@ -10,14 +10,19 @@
 </html>
 
 <script type='module'>
-  import render from '../src/index.js'
+  import html from '../src/index.js'
 
   const start = performance.now()
 
-  render(document.body, {
-    tag: 'section', c:
-      [...Array(1000)].map(() => Counter)
-  })
+  document.body.append(html`
+    <section>
+      ${[...Array(3)].map(() => 
+        html`
+          <c- ${Counter}></c->
+        `
+      )}
+    </section>
+  `)
 
   console.log(performance.now() - start)
 
@@ -25,30 +30,22 @@
     const count = store(0)
     const count2 = store(0)
 
-    return {
-      tag: 'button',
-      class: 'counter',
-      // _mount: () => console.log(self().innerHTML),
-      _click: () => count(count() + 1),
-      // __keydown: () => count2(count() + 1),
-      c: [
-        `Counter: ${count()} `,
-        count() % 2 === 0 && Indicator,
-        0,
-        Indicator,
-        { html: '&#128513;' }
-      ]
-    }
+    return html`
+      <button class='counter' @click=${() => count(count() + 1)}>
+        Counter: ${count()}
+        <c- ${Indicator}></c->
+      </button>
+    `
   }
 
   function Indicator({ store }) {
     const count = store(0)
 
-    return {
-      class: 'indicator',
-      _click: () => count(count() + 1),
-      c: count()
-    }
+    return html`
+      <div class='indicator' @click=${() => count(count() + 1)}>
+        ${count()}
+      </div>
+    `
   }
 </script>
 

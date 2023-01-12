@@ -111,4 +111,23 @@ const render = (target, nodeData, rerender) => {
   currentPath = tempPath.slice(0)
 }
 
-export default render
+// for each <c- render a component
+// for each prop find what immediately precedes it in the same index in the markup,
+// if its an equal than need to set an attribute
+const html = (markupNodes, ...props) => {
+  if (!markupNodes)
+    return
+
+  const markup = markupNodes.reduce((str, node, index) => {
+    str += node.replace(/\s+/g, ' ').trim()
+
+    if (index < markupNodes.length)
+      str += '@prop_' + index
+
+    return str
+  }, '')
+
+  console.log(markup, props)
+}
+
+export default html
