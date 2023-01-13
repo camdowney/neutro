@@ -121,13 +121,22 @@ const html = (markupNodes, ...props) => {
   const markup = markupNodes.reduce((str, node, index) => {
     str += node.replace(/\s+/g, ' ').trim()
 
-    if (index < markupNodes.length)
+    if (index < markupNodes.length - 1)
       str += '@prop_' + index
 
     return str
   }, '')
 
   console.log(markup, props)
+
+  const dom = document.createElement('div')
+  dom.innerHTML = markup
+
+  props.forEach(prop => {
+    // query dom
+  })
+
+  return dom
 }
 
 export default html
