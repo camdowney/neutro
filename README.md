@@ -1,8 +1,6 @@
 # Neutro
 Neutro is a ridiculously simple and lightweight (<1 KB min + gzip) solution for integrating stateful components into your JS application. No other tools are needed—markup is written in object format which allows it to be modularized without the need for a transpiler.
 
-*Currently a work-in-progress; expect bugs and breaking changes with each release.*
-
 ## Example Stateful Component
 ```js
 export default function Counter({ store }) {
