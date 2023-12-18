@@ -3,53 +3,49 @@
 <head>
   <meta charset='utf-8'>
   <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-  <title>Neutro GUI Test</title>
+  <title>Neutro UI Test</title>
 </head>
 <body>
+  <div id='root'></div>
 </body>
 </html>
 
 <script type='module'>
   import render from '../src/index.js'
 
+  const App = ({ self, store }) => {
+    return /*html*/`
+      <div>
+        <h1>Counter</h1>
+        <span as=${Counter} initalCount=${1}></span>
+      </div>
+    `
+  }
+
+  const Counter = ({ self: { store, subscribe }, initialCount = 0 }) => {
+    const count = store(initialCount)
+
+    subscribe([count])
+
+    return /*html*/`
+      <div
+        on:click=${() => count(count() + 1)}
+        class='counter'
+      >
+        ${count}
+      </div>
+    `
+  }
+
   const start = performance.now()
 
-  render(document.body, {
-    tag: 'section', c:
-      [...Array(1000)].map(() => Counter)
+  render(document.querySelector('#root'), () => {
+    return /*html*/`
+      <span as=${App}></span>
+    `
   })
 
   console.log(performance.now() - start)
-
-  function Counter({ self, store }) {
-    const count = store(0)
-    const count2 = store(0)
-
-    return {
-      tag: 'button',
-      class: 'counter',
-      // _mount: () => console.log(self().innerHTML),
-      _click: () => count(count() + 1),
-      // __keydown: () => count2(count() + 1),
-      c: [
-        `Counter: ${count()} `,
-        count() % 2 === 0 && Indicator,
-        0,
-        Indicator,
-        { html: '&#128513;' }
-      ]
-    }
-  }
-
-  function Indicator({ store }) {
-    const count = store(0)
-
-    return {
-      class: 'indicator',
-      _click: () => count(count() + 1),
-      c: count()
-    }
-  }
 </script>
 
 <style>
@@ -83,18 +79,5 @@
 
   .counter:hover {
     background-color: #2a2a2a;
-  }
-
-  .indicator {
-    position: relative;
-    width: 1rem;
-    height: 1rem;
-    border-radius: 9999px;
-    background-color: #f72435;
-    z-index: 100;
-  }
-
-  .indicator:hover {
-    background-color: #4424f7;
   }
 </style>

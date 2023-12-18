@@ -17,31 +17,19 @@ const signalEvent = (target, eventName) =>
 
 /**
  * Converts node representations to actual nodes and appends output to (or replaces) target element
- * @param {Element|string} target Element to render node(s) at
- * @param {{}|[]|Function|string} nodeData Representation of node(s) to render
+ * @param {Element} target Element to render node(s) at
+ * @param {Function} component Representation of node(s) to render
  * @param {boolean} rerender Replaces target with rendered node(s) if true
  * @returns {void}
  */
-const render = (target, nodeData, rerender) => {
-  if (!target?.nodeType || nodeData === undefined)
+const render = (target, component, rerender) => {
+  if (!target || !target.nodeType || typeof component !== 'function')
     return
-
-  if (typeof nodeData === 'function')
-    return render(target, { tag: nodeData }, rerender)
-
-  if (Array.isArray(nodeData))
-    return nodeData.forEach(node => render(target, node))
 
   /**
    * Register node in path
    */
   currentPath[currentPath.length - 1]++
-
-  if (nodeData === null || nodeData === false)
-    return
-
-  if (typeof nodeData !== 'object')
-    return target.append(nodeData)
 
   /**
    * Node data is confirmed Object at this point; setup store if component
@@ -50,7 +38,6 @@ const render = (target, nodeData, rerender) => {
   let partitionID = 0
 
   /**
-   * Used at top-level of components to maintain state while triggering re-renders
    * @param {any} initialValue Initial value of store
    * @returns {{ get: any }} Store value accessor
    */
@@ -76,13 +63,7 @@ const render = (target, nodeData, rerender) => {
   /**
    * Convert node data to usable format
    */
-  const cleanData = typeof nodeData?.tag === 'function'
-    ? nodeData.tag({ self: () => createdElement, store, ...nodeData }) // is component
-    : nodeData // is object
-
-  const { c: children, ...atts } = cleanData?.constructor === Object
-    ? cleanData
-    : { tag: 'span', c: cleanData }
+  
   
   /**
    * Data manipulation complete; render single element then append children
