@@ -22,7 +22,7 @@ const signalEvent = (target, eventName) =>
  * @param {boolean} rerender Replaces target with rendered node(s) if true
  * @returns {void}
  */
-const render = (target, component, rerender) => {
+export const render = (target, component, rerender) => {
   if (!target || !target.nodeType || typeof component !== 'function')
     return
 
@@ -31,68 +31,51 @@ const render = (target, component, rerender) => {
    */
   currentPath[currentPath.length - 1]++
 
-  /**
-   * Node data is confirmed Object at this point; setup store if component
-   */
-  let createdElement
-  let partitionID = 0
+  target.innerHTML = component()
 
-  /**
-   * @param {any} initialValue Initial value of store
-   * @returns {{ get: any }} Store value accessor
-   */
-  const store = initialValue => {
-    const tempPath = currentPath.slice(0)
-    const partitionKey = 'n' + currentPath.join('n') + 'p' + partitionID++
+  console.log(component())
 
-    storage[partitionKey] = storage[partitionKey] ?? initialValue
+  // const idk = document.createElement('span')
+  // idk.innerHTML = test
+  // console.log(idk)
 
-    return value =>
-      value === undefined
-        ? storage[partitionKey]
-        : (
-          storage[partitionKey] = value,
+  // target.querySelectorAll('[as]').forEach(child => {
+  //   const componentFunction = child.getAttribute('as')
+  //   const props = {}
 
-          currentPath = tempPath.slice(0),
-          currentPath[currentPath.length - 1]--,
-    
-          render(createdElement, nodeData, true)
-        )
-  }
+  //   Array.from(child.attributes)
+  //     .filter(att => att.name !== 'as')
+  //     .forEach(att => props[att.name] = att.value)
 
-  /**
-   * Convert node data to usable format
-   */
-  
-  
+  //   child.outerHTML = componentFunction({ ...props })
+  // })
+
   /**
    * Data manipulation complete; render single element then append children
    */
-  if (rerender) {
-    const parent = target.parentNode
-    const index = [...parent.children].indexOf(target)
+  // if (rerender) {
+  //   const parent = target.parentNode
+  //   const index = [...parent.children].indexOf(target)
 
-    signalEvent(target, 'unmount')
-    target.querySelectorAll('*').forEach(child => signalEvent(child, 'unmount'))
+  //   signalEvent(target, 'unmount')
+  //   target.querySelectorAll('*').forEach(child => signalEvent(child, 'unmount'))
 
-    parent.replaceChild(createElement(atts), target)
-    createdElement = parent.children[index]
-  }
-  else {
-    target.append(createElement(atts))
-    createdElement = target.lastChild
-  }
+  //   parent.replaceChild(createElement(atts), target)
+  //   createdElement = parent.children[index]
+  // }
+  // else {
+  //   target.append(createElement(atts))
+  //   createdElement = target.lastChild
+  // }
   
-  const tempPath = currentPath.slice(0)
-  currentPath.push(-1)
+  // const tempPath = currentPath.slice(0)
+  // currentPath.push(-1)
 
-  render(createdElement, children)
-  signalEvent(createdElement, 'mount')
+  // render(createdElement, children)
+  // signalEvent(createdElement, 'mount')
 
-  currentPath = tempPath.slice(0)
+  // currentPath = tempPath.slice(0)
 }
-
-export default render
 
 export function html(strings, ...values) {
   const root = document.createElement('span')
@@ -107,14 +90,32 @@ export function html(strings, ...values) {
     const value = as.replace(/%/g, '')
     const children = Array.from(el.children).map(child => child.cloneNode(true))
 
-    const get = (query = '', index = 0) =>
+    /**
+     * Node data is confirmed Object at this point; setup store if component
+     */
+    let partitionID = 0
+
+    /**
+     * 
+     */
+    const select = (query = '', index = 0) =>
       query === '' ? el : el.querySelectorAll(query)[index]
 
+    /**
+     * @param {any} initialValue Initial value of store
+     * @returns {{ get: any }} Store value accessor
+     */
+    const store = initialValue => {
+      const tempPath = currentPath.slice(0)
+      const partitionKey = 'n' + currentPath.join('n') + 'p' + partitionID++
+
+      storage[partitionKey] = storage[partitionKey] ?? initialValue
+
+      return value => storage[partitionKey]
+    }
+
     el.appendChild(values[Number(value)]({
-      self: {
-        onMount: () => {},
-        get,
-      },
+      self: { select, store },
       ...Array.from(el.attributes).reduce((acc, att) => {
         return { ...acc, att: el.getAttribute(att) }
       }, {})
