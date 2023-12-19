@@ -93,3 +93,37 @@ const render = (target, component, rerender) => {
 }
 
 export default render
+
+export function html(strings, ...values) {
+  const root = document.createElement('span')
+
+  root.innerHTML = strings.map((s, i) => s + (i < strings.length - 1 ? `%%%${i}%%%` : '')).join('')
+
+  root.querySelectorAll('*').forEach(el => {
+    const as = el.getAttribute('as')
+
+    if (!as) return
+
+    const value = as.replace(/%/g, '')
+    const children = Array.from(el.children).map(child => child.cloneNode(true))
+
+    const get = (query = '', index = 0) =>
+      query === '' ? el : el.querySelectorAll(query)[index]
+
+    el.appendChild(values[Number(value)]({
+      self: {
+        onMount: () => {},
+        get,
+      },
+      ...Array.from(el.attributes).reduce((acc, att) => {
+        return { ...acc, att: el.getAttribute(att) }
+      }, {})
+    }))
+
+    el.removeAttribute('as')
+
+    console.log(Array.from(el.attributes))
+  })
+
+  return root
+}
