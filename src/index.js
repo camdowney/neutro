@@ -1,26 +1,25 @@
-let uid = 0
+let cuid = 0
 
 let storeValues = []
-export let storeIndex = 0
+let storeID = 0
 
-let subscriptions = []
-let subscribeIndex = 0
+let watchValues = []
+let watchID = 0
 
 const select = (root, selector) => 
   typeof selector === 'string' ? root.querySelector(selector) : root
 
 export const c = selector => {
-  const cuid = uid
-  if (!selector) uid++
+  const currCUID = cuid
+  if (!selector) cuid++
 
   const val = () => typeof selector === 'string'
     ? document.querySelector(selector)
-    : (selector ?? document.querySelector(`#u${cuid}`))
+    : (selector ?? document.querySelector(`#u${currCUID}`))
 
   return {
-    cuid, // TODO: remove
     val,
-    ref: () => selector ? '' : `<span id="u${cuid}"></span>`,
+    ref: () => selector ? '' : `<span id="u${currCUID}"></span>`,
     html: newValue => val().innerHTML = newValue,
     select: selector => c(select(val(), selector)),
     on: (eventName, callback) => val().addEventListener(eventName, callback),
@@ -28,48 +27,45 @@ export const c = selector => {
 }
 
 export const store = initialValue => {
-  const currStoreIndex = storeIndex++
-  const currSubscribeIndex = subscribeIndex
+  const currStoreID = storeID++
+  const currWatchID = watchID
 
-  if (storeValues[currStoreIndex] === undefined)
-    storeValues[currStoreIndex] = initialValue
+  if (storeValues[currStoreID] === undefined)
+    storeValues[currStoreID] = initialValue
 
   return {
     get val() {
-      return storeValues[currStoreIndex]
+      return storeValues[currStoreID]
     },
     set val(newValue) {
-      storeValues[currStoreIndex] = newValue
+      storeValues[currStoreID] = newValue
 
-      const prevStoreIndex = storeIndex
-      storeIndex = currStoreIndex + 1
+      const prevStoreID = storeID
+      storeID = currStoreID + 1
   
-      subscriptions[currSubscribeIndex].forEach(callback => callback())
+      watchValues[currWatchID].forEach(callback => callback())
 
-      storeIndex = prevStoreIndex + storeIndex
-
-      // TODO: remove
-      console.log(storeValues)
+      storeID = prevStoreID + storeID
     },
   }
 }
 
 export const watch = callback => {
-  const currSubscribeIndex = subscribeIndex++
+  const currWatchID = watchID++
 
   const update = () => {
-    const prevSubscribeIndex = subscribeIndex
-    subscribeIndex = currSubscribeIndex + 1
+    const prevWatchID = watchID
+    watchID = currWatchID + 1
     
     callback()
 
-    subscribeIndex = prevSubscribeIndex + subscribeIndex
+    watchID = prevWatchID + watchID
   }
 
-  if (subscriptions[currSubscribeIndex] === undefined)
-    subscriptions[currSubscribeIndex] = []
+  if (watchValues[currWatchID] === undefined)
+    watchValues[currWatchID] = []
 
-  subscriptions[currSubscribeIndex].push(update)
+  watchValues[currWatchID].push(update)
 
   callback()
 }
