@@ -41,9 +41,12 @@ export const store = initialValue => {
     set val(newValue) {
       storeValues[currStoreIndex] = newValue
 
-      storeIndex = currStoreIndex
+      const temp = storeIndex
+      storeIndex = currStoreIndex + 1
   
       subscriptions[currSubscribeIndex].forEach(callback => callback())
+
+      storeIndex = storeIndex + temp
 
       // TODO: remove
       console.log(storeValues)
@@ -54,18 +57,14 @@ export const store = initialValue => {
 export const watch = callback => {
   const currSubscribeIndex = subscribeIndex++
 
-  if (subscriptions[currSubscribeIndex] === undefined)
-    subscriptions[currSubscribeIndex] = []
-
   const update = () => {
     subscribeIndex = currSubscribeIndex
-
+    
     callback()
-
-    // TODO: remove killswitch
-    if (storeValues[0].length > 10 || storeValues[1] > 50 || storeValues[2] > 50)
-      document.body.innerHTML = ''
   }
+
+  if (subscriptions[currSubscribeIndex] === undefined)
+    subscriptions[currSubscribeIndex] = []
 
   subscriptions[currSubscribeIndex].push(update)
 
