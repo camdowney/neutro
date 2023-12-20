@@ -10,18 +10,24 @@ const select = (root, selector) =>
   typeof selector === 'string' ? root.querySelector(selector) : root
 
 export const c = selector => {
-  const currUID = `u${uid++}`
-  const _select = () => select(document, selector ?? `#${currUID}`)
+  const cuid = uid
 
-  // TODO: Once html is called, outerHTML is replaced
-  // and _select returns element based on old parent[parent.children.indexOf(this)]
+  const _this = () =>
+    typeof selector === 'string' ? document.querySelector(selector)
+      : (selector ?? document.querySelector(`#u${cuid}`))
+  
+  if (!selector) uid++
 
   return {
-    value: () => _select(),
-    ref: () => selector ? '' : `<span id="${currUID}"></span>`,
-    html: newValue => _select().innerHTML = newValue,
-    select: selector => c(select(_select(), selector)),
-    on: (eventName, callback) => _select().addEventListener(eventName, callback),
+    cuid, // TODO: remove
+    val: () => _this(),
+    ref: () => selector ? '' : `<span id="u${cuid}"></span>`,
+    html: newValue => _this().innerHTML = newValue,
+    select: selector => c(select(_this(), selector)),
+    on: (eventName, callback) => {
+      console.log('add ', eventName, ' listener to ', _this())
+      _this().addEventListener(eventName, callback)
+    },
   }
 }
 
@@ -45,9 +51,6 @@ export const store = initialValue => {
       subscriptions[currSubscribeIndex].forEach(callback => callback())
   
       storeIndex = temp
-  
-      // TODO: remove log
-      console.log(storeValues)
     },
   }
 }
@@ -65,7 +68,8 @@ export const watch = callback => {
     callback()
 
     // TODO: remove killswitch
-    if (storeValues[0].length > 10) document.body.innerHTML = ''
+    if (storeValues[0].length > 10 || storeValues[1] > 50 || storeValues[2] > 50)
+      document.body.innerHTML = ''
 
     subscribeIndex = temp
   }
