@@ -19,13 +19,11 @@
     watch(() => {
       ref.html(`
         <button class='counter'>
-          ${count()}
+          ${count.val}
         </button>
       `)
 
-      ref.select('button').on('click', () => {
-        count(count() + 1)
-      })
+      ref.select('button').on('click', () => count.val++)
     })
   }
 
@@ -39,13 +37,13 @@
       ref.html(`
         <section>
           <h1>Counter</h1>
-          <button id='btn'>${str()}</button>
+          <button id='btn'>${str.val}</button>
           ${counter1.ref()}
           ${counter2.ref()}
         </section>
       `)
 
-      c('#btn').on('click', () => str(str() + 'a'))
+      c('#btn').on('click', () => str.val += 'a')
 
       Counter({ ref: counter1 })
 

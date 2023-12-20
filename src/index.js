@@ -13,11 +13,12 @@ export const c = selector => {
   const currUID = `u${uid++}`
   const _select = () => select(document, selector ?? `#${currUID}`)
 
-  // TODO: Once html is called, _select should return element based on old parent[childIndex]
+  // TODO: Once html is called, outerHTML is replaced
+  // and _select returns element based on old parent[parent.children.indexOf(this)]
 
   return {
     value: () => _select(),
-    ref: () => selector ? 'Cannot insert ref for existing element' : `<span id="${currUID}"></span>`,
+    ref: () => selector ? '' : `<span id="${currUID}"></span>`,
     html: newValue => _select().innerHTML = newValue,
     select: selector => c(select(_select(), selector)),
     on: (eventName, callback) => _select().addEventListener(eventName, callback),
@@ -31,21 +32,23 @@ export const store = initialValue => {
   if (!storeValues[currStoreIndex])
     storeValues[currStoreIndex] = initialValue
 
-  return newValue => {
-    if (newValue === undefined)
+  return {
+    get val() {
       return storeValues[currStoreIndex]
+    },
+    set val(newValue) {
+      storeValues[currStoreIndex] = newValue
 
-    storeValues[currStoreIndex] = newValue
-
-    const temp = storeIndex
-    storeIndex = currStoreIndex
-
-    subscriptions[currSubscribeIndex].forEach(callback => callback())
-
-    storeIndex = temp
-
-    // TODO: remove log
-    console.log(storeValues)
+      const temp = storeIndex
+      storeIndex = currStoreIndex
+  
+      subscriptions[currSubscribeIndex].forEach(callback => callback())
+  
+      storeIndex = temp
+  
+      // TODO: remove log
+      console.log(storeValues)
+    },
   }
 }
 
