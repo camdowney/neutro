@@ -12,22 +12,19 @@ const select = (root, selector) =>
 export const c = selector => {
   const cuid = uid
 
-  const _this = () =>
-    typeof selector === 'string' ? document.querySelector(selector)
-      : (selector ?? document.querySelector(`#u${cuid}`))
+  const val = () => typeof selector === 'string'
+    ? document.querySelector(selector)
+    : (selector ?? document.querySelector(`#u${cuid}`))
   
   if (!selector) uid++
 
   return {
     cuid, // TODO: remove
-    val: () => _this(),
+    val,
     ref: () => selector ? '' : `<span id="u${cuid}"></span>`,
-    html: newValue => _this().innerHTML = newValue,
-    select: selector => c(select(_this(), selector)),
-    on: (eventName, callback) => {
-      console.log('add ', eventName, ' listener to ', _this())
-      _this().addEventListener(eventName, callback)
-    },
+    html: newValue => val().innerHTML = newValue,
+    select: selector => c(select(val(), selector)),
+    on: (eventName, callback) => val().addEventListener(eventName, callback),
   }
 }
 
@@ -49,6 +46,8 @@ export const store = initialValue => {
       storeIndex = currStoreIndex
   
       subscriptions[currSubscribeIndex].forEach(callback => callback())
+
+      console.log(storeValues)
   
       storeIndex = temp
     },
