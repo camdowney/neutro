@@ -10,39 +10,41 @@
 </html>
 
 <script type='module'>
-  import { render, html } from '../src/index.js'
+  import { store, subscribe } from '../src/index.js'
 
-  const Counter = ({ self: { store, subscribe, select }, initialCount = 0 }) => {
-    return html`<span class='counter'>${initialCount}</span>`
-    
+  const Counter = ({ root, initialCount = 0 }) => {
     const count = store(initialCount)
 
-    subscribe([count])
+    subscribe(() => {
+      root.innerHTML = `
+        <button>
+          ${count()}
+        </button>
+      `
 
-    return html`
-      <div
-        on:click=${() => count(count() + 1)}
-        class='counter'
-      >
-        ${count}
-      </div>
-    `
+      root.querySelector('button').addEventListener('click', () => {
+        count(count() + 1)
+      })
+    })
   }
 
-  const App = ({ self }) => {
-    return html`
-      <div>
-        <h1>Counter</h1>
-        <span as=${Counter} initalCount=${1}></span>
-      </div>
-    `
+  const App = () => {
+    subscribe(() => 
+      document.body.innerHTML = `
+        <section>
+          <h1>Counter</h1>
+          <span id='counter'></span>
+        </section>
+      `
+    )
+
+    Counter({
+      root: document.querySelector('#counter'),
+      initialCount: 2,
+    })
   }
 
-  render(document.body, () => {
-    return html`
-      <span as=${App}></span>
-    `
-  })
+  App()
 </script>
 
 <style>
