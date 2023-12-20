@@ -6,9 +6,6 @@ let storeID = 0
 let watchValues = []
 let watchID = 0
 
-const select = (root, selector) => 
-  typeof selector === 'string' ? root.querySelector(selector) : root
-
 export const c = selector => {
   const currCUID = cuid
   if (!selector) cuid++
@@ -21,7 +18,7 @@ export const c = selector => {
     val,
     ref: () => selector ? '' : `<span id="u${currCUID}"></span>`,
     html: newValue => val().innerHTML = newValue,
-    select: selector => c(select(val(), selector)),
+    select: selector => c(val().querySelector(selector)),
     on: (eventName, callback) => val().addEventListener(eventName, callback),
   }
 }
