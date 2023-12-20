@@ -11,12 +11,11 @@ const select = (root, selector) =>
 
 export const c = selector => {
   const cuid = uid
+  if (!selector) uid++
 
   const val = () => typeof selector === 'string'
     ? document.querySelector(selector)
     : (selector ?? document.querySelector(`#u${cuid}`))
-  
-  if (!selector) uid++
 
   return {
     cuid, // TODO: remove
@@ -32,7 +31,7 @@ export const store = initialValue => {
   const currStoreIndex = storeIndex++
   const currSubscribeIndex = subscribeIndex
 
-  if (!storeValues[currStoreIndex])
+  if (storeValues[currStoreIndex] === undefined)
     storeValues[currStoreIndex] = initialValue
 
   return {
@@ -42,14 +41,12 @@ export const store = initialValue => {
     set val(newValue) {
       storeValues[currStoreIndex] = newValue
 
-      const temp = storeIndex
       storeIndex = currStoreIndex
   
       subscriptions[currSubscribeIndex].forEach(callback => callback())
 
+      // TODO: remove
       console.log(storeValues)
-  
-      storeIndex = temp
     },
   }
 }
@@ -57,11 +54,10 @@ export const store = initialValue => {
 export const watch = callback => {
   const currSubscribeIndex = subscribeIndex++
 
-  if (!subscriptions[currSubscribeIndex])
+  if (subscriptions[currSubscribeIndex] === undefined)
     subscriptions[currSubscribeIndex] = []
 
   const update = () => {
-    const temp = subscribeIndex
     subscribeIndex = currSubscribeIndex
 
     callback()
@@ -69,8 +65,6 @@ export const watch = callback => {
     // TODO: remove killswitch
     if (storeValues[0].length > 10 || storeValues[1] > 50 || storeValues[2] > 50)
       document.body.innerHTML = ''
-
-    subscribeIndex = temp
   }
 
   subscriptions[currSubscribeIndex].push(update)
