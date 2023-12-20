@@ -1,7 +1,7 @@
 let uid = 0
 
 let storeValues = []
-let storeIndex = 0
+export let storeIndex = 0
 
 let subscriptions = []
 let subscribeIndex = 0
@@ -41,12 +41,12 @@ export const store = initialValue => {
     set val(newValue) {
       storeValues[currStoreIndex] = newValue
 
-      const temp = storeIndex
+      const prevStoreIndex = storeIndex
       storeIndex = currStoreIndex + 1
   
       subscriptions[currSubscribeIndex].forEach(callback => callback())
 
-      storeIndex = storeIndex + temp
+      storeIndex = prevStoreIndex + storeIndex
 
       // TODO: remove
       console.log(storeValues)
@@ -58,9 +58,12 @@ export const watch = callback => {
   const currSubscribeIndex = subscribeIndex++
 
   const update = () => {
-    subscribeIndex = currSubscribeIndex
+    const prevSubscribeIndex = subscribeIndex
+    subscribeIndex = currSubscribeIndex + 1
     
     callback()
+
+    subscribeIndex = prevSubscribeIndex + subscribeIndex
   }
 
   if (subscriptions[currSubscribeIndex] === undefined)

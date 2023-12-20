@@ -11,9 +11,10 @@
 </html>
 
 <script type='module'>
-  import { c, store, watch } from '../src/index.js'
+  import { c, store, watch, storeIndex } from '../src/index.js'
 
   const Counter = ({ ref, initialCount = 0 }) => {
+    console.log(storeIndex)
     const count = store(initialCount)
 
     watch(() => {
