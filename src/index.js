@@ -1,4 +1,4 @@
-let _uid = 0
+let uid = 0
 
 let storeValues = []
 let storeIndex = 0
@@ -6,35 +6,21 @@ let storeIndex = 0
 let subscriptions = []
 let subscribeIndex = 0
 
-export const uid = () => {
-  const currUID = `id="u${ _uid++}"`
-  return () => currUID
-}
+const select = (root, selector) => 
+  typeof selector === 'string' ? root.querySelector(selector) : root
 
-export const on = (root, eventName, callback) => {
-  root.addEventListener(eventName, callback)
-}
+export const c = selector => {
+  const currUID = `u${uid++}`
+  const _select = () => select(document, selector ?? `#${currUID}`)
 
-export const children = (root, newValue) => {
-  if (!newValue)
-    return root.children
-
-  root.innerHTML = newValue
-}
-
-export const select = (rootOrSelectorInit, selectorInit) => {
-  const root = selectorInit ? rootOrSelectorInit : document
-  const selector = selectorInit ?? rootOrSelectorInit
-
-  const selected = typeof selector === 'function' ? root.querySelector('#' + selector().split('"')[1])
-    : typeof selector === 'string' ? root.querySelector(selector)
-    : selector
+  // TODO: Once html is called, _select should return element based on old parent[childIndex]
 
   return {
-    value: () => selected,
-    children: newValue => children(selected, newValue),
-    select: selector => select(selected, selector),
-    on: (eventName, callback) => on(selected, eventName, callback),
+    value: () => _select(),
+    ref: () => selector ? 'Cannot insert ref for existing element' : `<span id="${currUID}"></span>`,
+    html: newValue => _select().innerHTML = newValue,
+    select: selector => c(select(_select(), selector)),
+    on: (eventName, callback) => _select().addEventListener(eventName, callback),
   }
 }
 
@@ -57,11 +43,13 @@ export const store = initialValue => {
     subscriptions[currSubscribeIndex].forEach(callback => callback())
 
     storeIndex = temp
+
+    // TODO: remove log
     console.log(storeValues)
   }
 }
 
-export const subscribe = callback => {
+export const watch = callback => {
   const currSubscribeIndex = subscribeIndex++
 
   if (!subscriptions[currSubscribeIndex])
@@ -72,6 +60,9 @@ export const subscribe = callback => {
     subscribeIndex = currSubscribeIndex
 
     callback()
+
+    // TODO: remove killswitch
+    if (storeValues[0].length > 10) document.body.innerHTML = ''
 
     subscribeIndex = temp
   }

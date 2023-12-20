@@ -6,87 +6,54 @@
   <title>Neutro UI Test</title>
 </head>
 <body>
+  <span id='root'></span>
 </body>
 </html>
 
 <script type='module'>
-  import { uid, select, store, subscribe } from '../src/index.js'
+  import { c, store, watch } from '../src/index.js'
 
-  const Counter = (root, { initialCount = 0 }) => {
+  const Counter = ({ ref, initialCount = 0 }) => {
     const count = store(initialCount)
 
-    subscribe(() => {
-      root.children(`
+    watch(() => {
+      ref.html(`
         <button class='counter'>
           ${count()}
         </button>
       `)
 
-      root.select('button').on('click', () => {
+      ref.select('button').on('click', () => {
         count(count() + 1)
       })
     })
   }
 
-  // const App = () => {
-  //   const [str, setStr] = useState('a')
-
-  //   return (
-  //     <section>
-  //       <h1>Counter</h1>
-  //       <button onClick={() => setStr(str + 'a')}>{str}</button>
-  //       <Counter />
-  //       <Counter initialCount={2} />
-  //     </section>
-  //   )
-  // }
-
-  const App = root => {
-    const btn = uid()
-    const counter1 = uid()
-    const counter2 = uid()
-
+  const App = ({ ref }) => {
     const str = store('a')
 
-    subscribe(() => {
-      root.children(`
+    const counter1 = c()
+    const counter2 = c()
+
+    watch(() => {
+      ref.html(`
         <section>
           <h1>Counter</h1>
-          <button ${btn()}>${str()}</button>
-          <span ${counter1()}></span>
-          <span ${counter2()}></span>
+          <button id='btn'>${str()}</button>
+          ${counter1.ref()}
+          ${counter2.ref()}
         </section>
       `)
 
-      select(btn).on('click', () => str(str() + 'a'))
+      c('#btn').on('click', () => str(str() + 'a'))
 
-      Counter(select(counter1), { initialCount: 1 })
+      Counter({ ref: counter1 })
 
-      Counter(select(counter2), { initialCount: 2 })
+      Counter({ ref: counter2, initialCount: 2 })
     })
   }
 
-  // const App = root => {
-  //   const btn = create(`<button ${btn()}>${str()}</button>`)
-  //   const counter1 = create(Counter())
-  //   const counter2 = create(Counter({ intitialCount: 2 }))
-
-  //   const str = store('a')
-
-  //   subscribe(() => {
-  //     root.children(`
-  //       <section>
-  //         $
-  //         ${counter1()}>
-  //         ${counter2()}>
-  //       </section>
-  //     `)
-
-  //     select(btn).on('click', () => str(str() + 'a'))
-  //   })
-  // }
-
-  App(select(document.body))
+  App({ ref: c('#root') })
 </script>
 
 <style>
