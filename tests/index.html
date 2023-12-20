@@ -10,14 +10,17 @@
 </body>
 </html>
 
+<!-- 858 -->
 <script type='module'>
   import { c, store, watch } from '../src/index.js'
 
-  const Counter = ({ ref, initialCount = 0 }) => {
+  const Counter = ({ initialCount = 0 }) => ref => {
+    console.log('render counter')
+
     const count = store(initialCount)
 
     watch(() => {
-      ref.html(`
+      ref.html(() => `
         <button class='counter'>
           ${count.val}
         </button>
@@ -27,31 +30,26 @@
     })
   }
 
-  const App = ({ ref }) => {
+  const App = ref => {
+    console.log('render app')
+
     const str = store('a')
 
-    const counter1 = c()
-    const counter2 = c()
-
     watch(() => {
-      ref.html(`
+      ref.html(() => `
         <section>
           <h1>Counter</h1>
           <button id='btn'>${str.val}</button>
-          ${counter1.ref()}
-          ${counter2.ref()}
+          ${c(Counter({}))}
+          ${c(Counter({ initialCount: 2 }))}
         </section>
       `)
 
       c('#btn').on('click', () => str.val += 'a')
-
-      Counter({ ref: counter1 })
-
-      Counter({ ref: counter2, initialCount: 2 })
     })
   }
 
-  App({ ref: c('#root') })
+  App(c('#root'))
 </script>
 
 <style>

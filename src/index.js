@@ -1,4 +1,6 @@
-let cuid = 0
+let cid = 0
+
+let renderValues = []
 
 let storeValues = []
 let storeID = 0
@@ -6,21 +8,41 @@ let storeID = 0
 let watchValues = []
 let watchID = 0
 
-export const c = selector => {
-  const currCUID = cuid
-  if (!selector) cuid++
+export const c = ref => {
+  const isRenderer = typeof ref === 'function'
+  const currCID = cid
 
-  const val = () => typeof selector === 'string'
-    ? document.querySelector(selector)
-    : (selector ?? document.querySelector(`#u${currCUID}`))
+  const val = () => typeof ref === 'string' ? document.querySelector(ref)
+    : isRenderer ? document.querySelector(`#u${currCID}`)
+    : ref
 
-  return {
+  const component = {
     val,
-    ref: () => selector ? '' : `<span id="u${currCUID}"></span>`,
-    html: newValue => val().innerHTML = newValue,
+    html: newValue => {
+      val().innerHTML = newValue()
+      console.log(renderValues)
+      const prevRenderValues = Array.from(renderValues)
+      renderValues = []
+      prevRenderValues.forEach(callback => callback())
+    },
     select: selector => c(val().querySelector(selector)),
     on: (eventName, callback) => val().addEventListener(eventName, callback),
   }
+
+  if (isRenderer) {
+    cid++
+    renderValues.push(() => {
+      const prevCID = cid
+      cid = currCID + 1
+
+      ref(component)
+
+      cid = prevCID
+    })
+    return `<span id="u${currCID}"></span>`
+  }
+
+  return component
 }
 
 export const store = initialValue => {
