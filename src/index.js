@@ -28,7 +28,7 @@ export const select = selector => {
   const e = typeof selector === 'string' ? document.querySelector(selector) : selector
 
   const html = newValue => {
-    e.innerHTML = newValue()
+    e.innerHTML = newValue
 
     const prevRenderValues = Array.from(renderValues)
     renderValues = []

@@ -18,7 +18,7 @@
     const count = store(initialCount)
 
     watch(() => {
-      ref.html(() => `
+      ref.html(`
         <button class='counter'>
           ${count.val}
         </button>
@@ -32,7 +32,7 @@
     const str = store('a')
 
     watch(() => {
-      ref.html(() => `
+      ref.html(`
         <section>
           <h1>Counter</h1>
           <button id='btn'>${str.val}</button>
