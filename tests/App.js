@@ -7,9 +7,9 @@ const Test = () => ref => {
   console.log('render keyboard')
 
   ref.html`
-    <div class='keyboard'>
+    <div>
       ${['abcd'].map(row => `
-        <div class='keyboard-row'>
+        <div>
           ${row.split('').map(char => Inner({ char }))}
         </div>
       `)}
@@ -28,9 +28,9 @@ watch(() => {
   root.html`
     <section>
       <h1>Counter</h1>
-      ${Concat({})}
+      ${Concat()}
       ${[0, 1].map(n => Counter({ initialCount: n }))}
-      ${Concat({})}
+      ${Concat()}
       ${Test()}
     </section>
   `
