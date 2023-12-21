@@ -12,26 +12,21 @@ export const q = selector => {
   const ref = typeof selector === 'string' ? document.querySelector(selector) : selector
 
   const html = (strings, ...statements) => {
-    let values = []
+    let values = [strings[0], strings.map((_, i) => [statements[i], strings[i + 1]])].flat(Infinity)
+    let cleanValues = []
     let components = []
-  
-    strings.forEach((str, i) => {
-      values.push(str)
-  
-      if (statements[i] === undefined) return
-  
-      ([statements[i]].flat().forEach(statement => {
-        if (statement === undefined) return
-        if (typeof statement !== 'function') return values.push(statement + '')
-  
-        const currCID = cid++
-  
-        components.push(() => statement(q(`#u${currCID}`)))
-        values.push(`<div id="u${currCID}"></div>`)
-      }))
+
+    values.forEach(value => {
+      if (value === undefined) return
+      if (typeof value !== 'function') return cleanValues.push(value + '')
+
+      const currCID = cid++
+
+      components.push(() => value(q(`#u${currCID}`)))
+      cleanValues.push(`<div id="u${currCID}"></div>`)
     })
   
-    ref.innerHTML = values.map(v => v.replace(/\s+/g, ' ')).join('')
+    ref.innerHTML = cleanValues.map(v => v.replace(/\s+/g, ' ')).join('')
   
     components.forEach(c => c())
   }
@@ -40,7 +35,11 @@ export const q = selector => {
     get val() { return ref },
     get class() { return ref.classList },
     html,
-    q: selector => q(ref.querySelector(selector)),
+    q: selector => {
+      const e = [...ref.querySelectorAll(selector)].map(q)
+      if (e.length === 1) return e[0]
+      return e
+    },
     on: (eventName, callback) => ref.addEventListener(eventName, callback),
   }
 }
