@@ -39,13 +39,20 @@ export const c = htmlCallback => {
 }
 
 export const store = initialValue => {
+  // TODO: remove
+  // console.log('create store', storeID)
+
   const currStoreID = storeID++
-  const currWatchID = watchID
 
   storeValues[currStoreID] = storeValues[currStoreID] ?? initialValue
 
   return {
     get val() {
+      const currWatchID = watchID - 1
+
+      // TODO: remove
+      // console.log('get store', currStoreID, 'register watch', currWatchID)
+
       storeIdToWatchIds[currStoreID] = storeIdToWatchIds[currStoreID] ?? []
 
       if (!storeIdToWatchIds[currStoreID].includes(currWatchID))
@@ -56,26 +63,32 @@ export const store = initialValue => {
     set val(newValue) {
       storeValues[currStoreID] = newValue
 
-      const prevStoreID = storeID
+      // const prevStoreID = storeID
       storeID = currStoreID + 1
+
+      // TODO: remove
+      // console.log('set store', storeID, 'trigger watch', storeIdToWatchIds[currStoreID].join(' '))
 
       storeIdToWatchIds[currStoreID].forEach(id => watchCallbacks[id]())
 
-      storeID += prevStoreID
+      // storeID += prevStoreID
     },
   }
 }
 
 export const watch = callback => {
-  const currWatchID = watchID++
+  // TODO: remove
+  // console.log('create watch', watchID)
 
+  const currWatchID = watchID++
+  
   const watchCallback = () => {
-    const prevWatchID = watchID
+    // const prevWatchID = watchID
     watchID = currWatchID + 1
     
     callback()
 
-    watchID += prevWatchID
+    // watchID += prevWatchID
   }
 
   watchCallbacks[currWatchID] = watchCallback
