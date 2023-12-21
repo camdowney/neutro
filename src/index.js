@@ -9,22 +9,14 @@ let watchValues = []
 let watchID = 0
 
 export const c = renderer => {
-  const currCID = cid
-  cid++
+  const currCID = cid++
 
-  renderValues.push(() => {
-    const prevCID = cid
-    cid = currCID + 1
-
-    renderer(select(`#u${currCID}`))
-
-    cid = prevCID
-  })
+  renderValues.push(() => renderer(q(`#u${currCID}`)))
     
   return `<span id="u${currCID}"></span>`
 }
 
-export const select = selector => {
+export const q = selector => {
   const e = typeof selector === 'string' ? document.querySelector(selector) : selector
 
   const html = newValue => {
@@ -39,7 +31,7 @@ export const select = selector => {
   return {
     val: () => e,
     html,
-    select: selector => select(e.querySelector(selector)),
+    q: selector => q(e.querySelector(selector)),
     on: (eventName, callback) => e.addEventListener(eventName, callback),
   }
 }
@@ -63,7 +55,7 @@ export const store = initialValue => {
   
       watchValues[currWatchID].forEach(callback => callback())
 
-      storeID = prevStoreID + storeID
+      storeID += prevStoreID
     },
   }
 }
@@ -77,7 +69,7 @@ export const watch = callback => {
     
     callback()
 
-    watchID = prevWatchID + watchID
+    watchID += prevWatchID
   }
 
   if (watchValues[currWatchID] === undefined)
