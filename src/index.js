@@ -8,34 +8,23 @@ let storeIdToWatchIds = []
 let watchID = 0
 let watchCallbacks = []
 
-// const queryComment = (root, content) => {
-//   root.childNodes.forEach(node => {
-//     if (node.nodeType === Node.COMMENT_NODE)
-//       return node
-
-//     if (node && node.childNodes && node.childNodes.length > 0)
-//       queryComment(node, content)
-//   })
-// }
-
 export const q = selector => {
   const e = typeof selector === 'string' ? document.querySelector(selector) : selector
 
-  // TODO: replace span ref
-  const html = (strings, ...callbacks) => {
+  const html = (strings, ...statements) => {
     let values = []
     let components = []
 
     strings.forEach((str, i) => {
       values.push(str)
       
-      if (callbacks[i] === undefined) return
-      if (typeof callbacks[i] !== 'function') return values.push(callbacks[i] + '')
+      if (statements[i] === undefined) return
+      if (typeof statements[i] !== 'function') return values.push(statements[i] + '')
 
       const currCID = cid++
 
-      components.push(() => callbacks[i](q(`#u${currCID}`)))
-      values.push(`<span id="u${currCID}"></span>`)
+      components.push(() => statements[i](q(`#u${currCID}`)))
+      values.push(`<div id="u${currCID}"></div>`)
     })
 
     e.innerHTML = values.map(v => v === ' ' ? v : v.trim()).join('')
@@ -44,7 +33,7 @@ export const q = selector => {
   }
 
   return {
-    get val() { return e }, // TODO: test
+    get val() { return e },
     html,
     q: selector => q(e.querySelector(selector)),
     on: (eventName, callback) => e.addEventListener(eventName, callback),
@@ -52,9 +41,6 @@ export const q = selector => {
 }
 
 export const store = initialValue => {
-  // TODO: remove
-  // console.log('create store', storeID)
-
   const currStoreID = storeID++
 
   storeValues[currStoreID] = storeValues[currStoreID] ?? initialValue
@@ -62,9 +48,6 @@ export const store = initialValue => {
   return {
     get val() {
       const currWatchID = watchID - 1
-
-      // TODO: remove
-      // console.log('get store', currStoreID, 'register watch', currWatchID)
 
       storeIdToWatchIds[currStoreID] = storeIdToWatchIds[currStoreID] ?? []
 
@@ -79,9 +62,6 @@ export const store = initialValue => {
       // const prevStoreID = storeID
       storeID = currStoreID + 1
 
-      // TODO: remove
-      // console.log('set store', storeID, 'trigger watch', storeIdToWatchIds[currStoreID].join(' '))
-
       storeIdToWatchIds[currStoreID].forEach(id => watchCallbacks[id]())
 
       // storeID += prevStoreID
@@ -90,9 +70,6 @@ export const store = initialValue => {
 }
 
 export const watch = callback => {
-  // TODO: remove
-  // console.log('create watch', watchID)
-
   const currWatchID = watchID++
   
   const watchCallback = () => {
