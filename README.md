@@ -1,6 +1,8 @@
 # Neutro
 Neutro is a ridiculously simple and lightweight (<1 KB min + gzip) solution for integrating stateful components into your JS application. No other tools are needed—markup is written in object format which allows it to be modularized without the need for a transpiler.
 
+Please note that this documentation is outdated, and only applies up to version 1.1.7.
+
 ## Example Stateful Component
 ```js
 export default function Counter({ store }) {
@@ -20,7 +22,7 @@ export default function Counter({ store }) {
 
 ## Rendering to HTML
 ```js
-import render from 'https://cdn.jsdelivr.net/npm/neutro/min.js'
+import render from 'https://cdn.jsdelivr.net/npm/neutro@1.1.7/min.js'
 import Counter from './components/Counter.js'
 
 render(document.body, [
@@ -44,7 +46,7 @@ npm i neutro
 
 jsDelivr
 ```js
-import render from 'https://cdn.jsdelivr.net/npm/neutro/min.js'
+import render from 'https://cdn.jsdelivr.net/npm/neutro@1.1.7/min.js'
 ```
 
 ## Documentation
