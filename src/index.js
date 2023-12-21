@@ -1,20 +1,14 @@
 let cid = 0
 
-let renderValues = []
+let htmlCallbacks = []
 
-let storeValues = []
 let storeID = 0
+let storeValues = []
 
-let watchValues = []
+let storeIdToWatchIds = []
+
 let watchID = 0
-
-export const c = renderer => {
-  const currCID = cid++
-
-  renderValues.push(() => renderer(q(`#u${currCID}`)))
-    
-  return `<span id="u${currCID}"></span>`
-}
+let watchCallbacks = []
 
 export const q = selector => {
   const e = typeof selector === 'string' ? document.querySelector(selector) : selector
@@ -22,10 +16,10 @@ export const q = selector => {
   const html = newValue => {
     e.innerHTML = newValue
 
-    const prevRenderValues = Array.from(renderValues)
-    renderValues = []
+    const prevHtmlCallbacks = Array.from(htmlCallbacks)
+    htmlCallbacks = []
     
-    prevRenderValues.forEach(callback => callback())
+    prevHtmlCallbacks.forEach(callback => callback())
   }
 
   return {
@@ -36,15 +30,27 @@ export const q = selector => {
   }
 }
 
+export const c = htmlCallback => {
+  const currCID = cid++
+
+  htmlCallbacks.push(() => htmlCallback(q(`#u${currCID}`)))
+    
+  return `<span id="u${currCID}"></span>`
+}
+
 export const store = initialValue => {
   const currStoreID = storeID++
   const currWatchID = watchID
 
-  if (storeValues[currStoreID] === undefined)
-    storeValues[currStoreID] = initialValue
+  storeValues[currStoreID] = storeValues[currStoreID] ?? initialValue
 
   return {
     get val() {
+      storeIdToWatchIds[currStoreID] = storeIdToWatchIds[currStoreID] ?? []
+
+      if (!storeIdToWatchIds[currStoreID].includes(currWatchID))
+        storeIdToWatchIds[currStoreID].push(currWatchID)
+
       return storeValues[currStoreID]
     },
     set val(newValue) {
@@ -52,8 +58,8 @@ export const store = initialValue => {
 
       const prevStoreID = storeID
       storeID = currStoreID + 1
-  
-      watchValues[currWatchID].forEach(callback => callback())
+
+      storeIdToWatchIds[currStoreID].forEach(id => watchCallbacks[id]())
 
       storeID += prevStoreID
     },
@@ -63,7 +69,7 @@ export const store = initialValue => {
 export const watch = callback => {
   const currWatchID = watchID++
 
-  const update = () => {
+  const watchCallback = () => {
     const prevWatchID = watchID
     watchID = currWatchID + 1
     
@@ -72,10 +78,7 @@ export const watch = callback => {
     watchID += prevWatchID
   }
 
-  if (watchValues[currWatchID] === undefined)
-    watchValues[currWatchID] = []
-
-  watchValues[currWatchID].push(update)
+  watchCallbacks[currWatchID] = watchCallback
 
   callback()
 }
