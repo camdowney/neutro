@@ -8,41 +8,40 @@ let storeID = 0
 let watchValues = []
 let watchID = 0
 
-export const c = ref => {
-  const isRenderer = typeof ref === 'function'
+export const c = renderer => {
   const currCID = cid
+  cid++
 
-  const val = () => typeof ref === 'string' ? document.querySelector(ref)
-    : isRenderer ? document.querySelector(`#u${currCID}`)
-    : ref
+  renderValues.push(() => {
+    const prevCID = cid
+    cid = currCID + 1
 
-  const component = {
-    val,
-    html: newValue => {
-      val().innerHTML = newValue()
-      console.log(renderValues)
-      const prevRenderValues = Array.from(renderValues)
-      renderValues = []
-      prevRenderValues.forEach(callback => callback())
-    },
-    select: selector => c(val().querySelector(selector)),
-    on: (eventName, callback) => val().addEventListener(eventName, callback),
+    renderer(select(`#u${currCID}`))
+
+    cid = prevCID
+  })
+    
+  return `<span id="u${currCID}"></span>`
+}
+
+export const select = selector => {
+  const e = typeof selector === 'string' ? document.querySelector(selector) : selector
+
+  const html = newValue => {
+    e.innerHTML = newValue()
+
+    const prevRenderValues = Array.from(renderValues)
+    renderValues = []
+    
+    prevRenderValues.forEach(callback => callback())
   }
 
-  if (isRenderer) {
-    cid++
-    renderValues.push(() => {
-      const prevCID = cid
-      cid = currCID + 1
-
-      ref(component)
-
-      cid = prevCID
-    })
-    return `<span id="u${currCID}"></span>`
+  return {
+    val: () => e,
+    html,
+    select: selector => select(e.querySelector(selector)),
+    on: (eventName, callback) => e.addEventListener(eventName, callback),
   }
-
-  return component
 }
 
 export const store = initialValue => {

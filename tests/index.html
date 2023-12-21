@@ -12,11 +12,9 @@
 
 <!-- 858 -->
 <script type='module'>
-  import { c, store, watch } from '../src/index.js'
+  import { c, select, store, watch } from '../src/index.js'
 
   const Counter = ({ initialCount = 0 }) => ref => {
-    console.log('render counter')
-
     const count = store(initialCount)
 
     watch(() => {
@@ -31,8 +29,6 @@
   }
 
   const App = ref => {
-    console.log('render app')
-
     const str = store('a')
 
     watch(() => {
@@ -45,11 +41,11 @@
         </section>
       `)
 
-      c('#btn').on('click', () => str.val += 'a')
+      select('#btn').on('click', () => str.val += 'a')
     })
   }
 
-  App(c('#root'))
+  App(select('#root'))
 </script>
 
 <style>
