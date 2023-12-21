@@ -4,48 +4,12 @@
   <meta charset='utf-8'>
   <meta name='viewport' content='width=device-width, initial-scale=1.0'>
   <title>Neutro UI Test</title>
+  <script src='./App.js' type='module'></script>
 </head>
 <body>
   <span id='root'></span>
 </body>
 </html>
-
-<script type='module'>
-  import { q, c, store, watch } from '../src/index.js'
-
-  const Counter = ({ initialCount = 0 }) => ref => {
-    const count = store(initialCount)
-
-    watch(() => {
-      ref.html(`
-        <button class='counter'>
-          ${count.val}
-        </button>
-      `)
-
-      ref.q('button').on('click', () => count.val++)
-    })
-  }
-
-  const App = ref => {
-    const str = store('a')
-
-    watch(() => {
-      ref.html(`
-        <section>
-          <h1>Counter</h1>
-          <button id='btn'>${str.val}</button>
-          ${c(Counter({}))}
-          ${c(Counter({ initialCount: 2 }))}
-        </section>
-      `)
-
-      q('#btn').on('click', () => str.val += 'a')
-    })
-  }
-
-  App(q('#root'))
-</script>
 
 <style>
   * {
