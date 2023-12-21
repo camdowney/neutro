@@ -1,7 +1,7 @@
 {
   "name": "neutro",
   "author": "@camdowney",
-  "version": "1.1.7",
+  "version": "2.0.0",
   "description": "Simple and lightweight solution for integrating components into your JS application—no other tools needed.",
   "keywords": [
     "javascript"
