@@ -9,34 +9,39 @@ let watchID = 0
 let watchCallbacks = []
 
 export const q = selector => {
-  const e = typeof selector === 'string' ? document.querySelector(selector) : selector
+  const ref = typeof selector === 'string' ? document.querySelector(selector) : selector
 
   const html = (strings, ...statements) => {
     let values = []
     let components = []
-
+  
     strings.forEach((str, i) => {
       values.push(str)
-      
+  
       if (statements[i] === undefined) return
-      if (typeof statements[i] !== 'function') return values.push(statements[i] + '')
-
-      const currCID = cid++
-
-      components.push(() => statements[i](q(`#u${currCID}`)))
-      values.push(`<div id="u${currCID}"></div>`)
+  
+      ([statements[i]].flat().forEach(statement => {
+        if (statement === undefined) return
+        if (typeof statement !== 'function') return values.push(statement + '')
+  
+        const currCID = cid++
+  
+        components.push(() => statement(q(`#u${currCID}`)))
+        values.push(`<div id="u${currCID}"></div>`)
+      }))
     })
-
-    e.innerHTML = values.map(v => v === ' ' ? v : v.trim()).join('')
-
+  
+    ref.innerHTML = values.map(v => v.replace(/\s+/g, ' ')).join('')
+  
     components.forEach(c => c())
   }
-
+  
   return {
-    get val() { return e },
+    get val() { return ref },
+    get class() { return ref.classList },
     html,
-    q: selector => q(e.querySelector(selector)),
-    on: (eventName, callback) => e.addEventListener(eventName, callback),
+    q: selector => q(ref.querySelector(selector)),
+    on: (eventName, callback) => ref.addEventListener(eventName, callback),
   }
 }
 

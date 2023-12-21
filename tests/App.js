@@ -5,12 +5,13 @@ import { Counter } from './Counter.js'
 const root = q('#root')
 
 watch(() => {
+  root.class.add('test')
+
   root.html`
     <section>
       <h1>Counter</h1>
       ${Concat({})}
-      ${Counter({})}
-      ${Counter({ initialCount: 2 })}
+      ${[0, 1].map(() => Counter({ }))}
       ${Concat({})}
     </section>
   `
