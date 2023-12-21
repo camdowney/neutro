@@ -1,7 +1,5 @@
 let cid = 0
 
-let htmlCallbacks = []
-
 let storeID = 0
 let storeValues = []
 
@@ -10,32 +8,47 @@ let storeIdToWatchIds = []
 let watchID = 0
 let watchCallbacks = []
 
+// const queryComment = (root, content) => {
+//   root.childNodes.forEach(node => {
+//     if (node.nodeType === Node.COMMENT_NODE)
+//       return node
+
+//     if (node && node.childNodes && node.childNodes.length > 0)
+//       queryComment(node, content)
+//   })
+// }
+
 export const q = selector => {
   const e = typeof selector === 'string' ? document.querySelector(selector) : selector
 
-  const html = newValue => {
-    e.innerHTML = newValue
+  // TODO: replace span ref
+  const html = (strings, ...callbacks) => {
+    let values = []
+    let components = []
 
-    const prevHtmlCallbacks = Array.from(htmlCallbacks)
-    htmlCallbacks = []
-    
-    prevHtmlCallbacks.forEach(callback => callback())
+    strings.forEach((str, i) => {
+      values.push(str)
+      
+      if (callbacks[i] === undefined) return
+      if (typeof callbacks[i] !== 'function') return values.push(callbacks[i] + '')
+
+      const currCID = cid++
+
+      components.push(() => callbacks[i](q(`#u${currCID}`)))
+      values.push(`<span id="u${currCID}"></span>`)
+    })
+
+    e.innerHTML = values.map(v => v === ' ' ? v : v.trim()).join('')
+
+    components.forEach(c => c())
   }
 
   return {
-    val: () => e,
+    get val() { return e }, // TODO: test
     html,
     q: selector => q(e.querySelector(selector)),
     on: (eventName, callback) => e.addEventListener(eventName, callback),
   }
-}
-
-export const c = htmlCallback => {
-  const currCID = cid++
-
-  htmlCallbacks.push(() => htmlCallback(q(`#u${currCID}`)))
-    
-  return `<span id="u${currCID}"></span>`
 }
 
 export const store = initialValue => {

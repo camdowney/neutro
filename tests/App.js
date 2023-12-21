@@ -5,7 +5,7 @@ import { Counter } from './Counter.js'
 const root = q('#root')
 
 watch(() => {
-  root.html(`
+  root.html`
     <section>
       <h1>Counter</h1>
       ${Concat({})}
@@ -13,5 +13,5 @@ watch(() => {
       ${Counter({ initialCount: 2 })}
       ${Concat({})}
     </section>
-  `)
+  `
 })
