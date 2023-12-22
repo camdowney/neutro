@@ -1,42 +1,45 @@
 # Neutro
-Neutro is a ridiculously simple and lightweight (<1 KB min + gzip) solution for integrating stateful components into your JS application. No other tools are needed—markup is written in object format which allows it to be modularized without the need for a transpiler.
+Neutro is a ridiculously simple and lightweight (<1 KB min + gzip) solution for integrating reactivity and components into your JS application. No transpiler needed!
 
-Please note that this documentation is outdated, and only applies up to version 1.1.7.
-
-## Example Stateful Component
+## Creating Reactive Components
 ```js
-export default function Counter({ store }) {
-  const count = store(0)
+import { store, watch } from 'https://cdn.jsdelivr.net/npm/neutro/min.js'
 
-  return {
-    tag: 'button',
-    class: 'counter',
-    _click: () => count(count() + 1),
-    c: { // short for "children" or "content"
-      tag: 'p', 
-      c: count()
-    },
-  }
+export const Counter = ({ initialCount = 0 }) => ref => {
+  const count = store(initialCount)
+
+  watch(() => {
+    ref.html`
+      <button class='counter'>
+        ${count.val}
+      </button>
+    `
+
+    ref.q('button').on('click', () => count.val++)
+  })
 }
 ```
 
-## Rendering to HTML
+## Using In Your App
 ```js
-import render from 'https://cdn.jsdelivr.net/npm/neutro@1.1.7/min.js'
-import Counter from './components/Counter.js'
+import { q } from 'https://cdn.jsdelivr.net/npm/neutro/min.js'
+import { Counter } from './Counter.js'
 
-render(document.body, [
-  { tag: 'header' },
-  { tag: 'main', c: [
-    { tag: 'section', class: 'counter-section', c:
-      { tag: Counter }
-    },
-  ]},
-  { tag: 'footer' },
-])
+const root = q('#root')
+
+root.html`
+  <header></header>
+  <main>
+    <section>
+      <h1>Counter:</h1>
+      ${Counter({ initialCount: 1 })}
+    </section>
+  </main>
+  <footer></footer>
+`
 ```
 
-## Adding Neutro to Your Project
+## Installation
 Neutro may be installed through a package manager or imported through [jsDelivr](https://www.jsdelivr.com/).
 
 npm
@@ -46,185 +49,161 @@ npm i neutro
 
 jsDelivr
 ```js
-import render from 'https://cdn.jsdelivr.net/npm/neutro@1.1.7/min.js'
+import { q, store, watch } from 'https://cdn.jsdelivr.net/npm/neutro/min.js'
 ```
 
 ## Documentation
-### render()
-The render function accepts two primary arguments: a target element and the node(s) to render. Nodes may be represented as components (functions), objects, text content, or arrays containing any combination of these types. Note that render() should only be called once per page, at the root of where you wish to begin implementing reactive data (generally the "body" element).
+### Querying elements - q()
+The q function, short for 'query', accepts one argument: a selector. You can simply think of it as document.querySelector, except that it adds some usual functionality to its return object.
 
-The below code appends an empty div (object format) to the body of an HTML document. Note that the "tag" property may either be a standard HTML tag or a component name.
+The object it returns has two getters (val and class) and three functions (html(), q(), and on()). If you haven't already guessed, you may chain q() calls as deep as you'd like.
 
 ```js
-render(document.body, { tag: 'div' })
+q('#root').q('#btn').on('click', () => console.log('Hi!'))
 ```
 
-### store()
-Components receive a custom "store" property by default. Neutro stores are similar to React's useState hook—they accept a default value and will trigger re-renders when modified. However, to negate the need for a separate setter function, stores return a single accessor (inspired by [S.js](https://github.com/adamhaile/S)) for both updating and retrieving their values. Calling the accessor with no parameters will simply return the store's value, while passing in a new value will update it.
-
-The below code creates a new store and initializes its value to 0. Incrementing this value triggers a re-render in which the UI will update automatically to show its new value.
+### Getting queried elements - q().val
+This one is pretty straightforward: calling .val on a queried element will simply return the corresponding HTML element in the DOM.
 
 ```js
-export default function Component({ store }) {
-  const count = store(0)
+console.log(q('#btn').val) // Logs: <button id='btn'></button>
+```
 
-  return {
-    tag: 'button',
-    _click: () => count(count() + 1),
-    c: count()
-  }
+### Modifying element classes - q().class
+This is also fairly straightforward and is simply a shortcut to calling .val.classList.
+
+```js
+q('#btn').class.add('btn-blue') // Becomes: <button id='btn' class='btn-blue'></button>
+```
+
+### Rendering HTML and components - q().html()
+This is where most of the magic takes place in Neutro. That being said, it's still quite simple under the hood.
+
+When you call .html() on a queried element, it starts with replacing the element's innerHTML with whatever you pass into it. If it's just a string value, then the work is done there. However, you may also pass in functions (components) as well. When this happens, a placeholder div will be inserted instead, and then the component will receive a reference to that placeholder. Since this relies on tagged templates, there are a few caveats, but overall it allows you to write markup similar to JSX without the need for transpilation.
+
+As for the components themselves, they simply need to return a function that accepts the reference that will be passed to them. Components don't need to return anything as a result; they should simply interact with their reference in order to render the desired markup.
+
+```js
+// Somewhere in your app
+import { TestComponent } from './TestComponent.js'
+
+ref.html`
+  <section>
+    // This:
+    ${TestComponent({ value: 'Hi world!' })}
+
+    // Will become this (includes a wrapper div):
+    <div id='...'>
+      <div class='hi-world'>
+        Hi world!
+      </div>
+    </div>
+  </section>
+`
+
+// TestComponent.js
+export const TestComponent = ({ value }) => ref => {
+  ref.html`
+    <div class='hi-world'>
+      ${value}
+    </div>
+  `
 }
 ```
 
-### self()
-Components additionally receive a custom "self" property by default. Calling self() will return the component's root element upon mount, effectively allowing the component to interact with the HTML it generates. Note that self() must only be called after the component has mounted.
-
-The below code logs the div that the component renders.
+### Adding event listeners - q().on()
+Another straightforward function which simply accepts an event name and a callback. In contrast to more sophisticated (transpiled) frameworks in which you can add event listeners directly inside markup, event listeners in Neutro must be attached after markup has been rendered.
 
 ```js
-export default function Component({ self }) {
-  function onMount() {
-    const renderedDiv = self()
-    console.log(renderedDiv) // Logs: <div>Hello world!</div>
-  }
+ref.html`
+  <button class='counter'>
+    ${count.val}
+  </button>
+`
 
-  return {
-    tag: 'div',
-    _mount: onMount,
-    c: 'Hello world!'
-  }
+ref.q('button').on('click', () => count.val++)
+```
+
+### Reactive values and functions - store() + watch()
+This is where reactivity comes into play. Rarely do we ever want to display merely static values when rendering HTML and utilizing components. 
+
+Stores accept an initial value and return an accessor (.val), while watches accept a callback. When you retrieve a store's value inside a watch, the watch will subscribe to any changes made to the store's value. In other words, setting the store's value will cause the watch to trigger the callback passed to it.
+
+This mechanism allows us to avoid a massive footgun found in many frameworks: prop drilling and tossing around global state. Simply export a store and any component can access it and subscribe to its changes.
+
+To address the obvious, reactive values and callbacks are absolutely not an original idea here (see [S.js](https://github.com/adamhaile/S)).
+
+```js
+export const count = store(0)
+
+export const Counter = () => ref => {
+  watch(() => {
+    ref.html`
+      <button class='counter'>
+        ${count.val}
+      </button>
+    `
+
+    ref.q('button').on('click', () => count.val++)
+  })
 }
 ```
 
-### Event listeners
-Event listeners may be added to elements by appending the target event name with a single underscore (_). Any standard events may be used; additionally, Neutro exposes two events for handling component lifecycle: "mount" and "unmount".
+## Avoiding Pitfalls
+### Maps inside .html()
+Remember that part of Neutro's simplicity lies in the fact that it uses tagged templates. That being said, JavaScript doesn't parse tagged templates as intuitively as you might think it does.
 
-The below code alerts the browser when the component has mounted.
+Mapping values inside html() calls is the biggest drawback here. Maps that will lead to nested components inside tagged templates will simply not work. Maps must either return a tagged template that can be evaluated as a string, or simply another component.
 
 ```js
-export default function Component() {
-  function onMount() {
-    alert('Mounted!')
-  }
+// ❌ This will not work:
+const OuterComponent = ({ items }) => ref => {
+  ref.html`
+    ${items.map(item => `
+      <div>
+        ${InnerComponent({ item })}
+      </div>
+    `)}
+  `
+}
 
-  return {
-    tag: 'div',
-    _mount: onMount,
-  }
+// ✔️ But this will:
+const OuterComponent = ({ items }) => ref => {
+  ref.html`
+    ${items.map(item => InnerComponent({ item }))}
+  `
 }
 ```
 
-### Window listeners
-Window listeners may be managed by appending the target event name with two underscores (__). This functionality overlaps a bit with how React's useEffect hook may be used, although window listeners in Neutro take care of the cleanup for you.
+### Wrappers everywhere...
+Neutro is built around components receiving references to elements that already exist in the DOM. These references will appear as wrapper divs, and will surely be a bit annoying sometimes.
 
-The below code adds a "keydown" event listener to the window upon mount. If the component unmounts (as a result of a re-render), the listener will be removed automatically before mounting again.
+That being said, modifying how these divs are displayed is trivial, so it shouldn't result in too much headache.
 
 ```js
-export default function Component() {
-  function onKeydown(e) {
-    console.log(e.key)
-  }
+ref.html`
+  <section>
+    // This:
+    ${TestComponent({ value: 'Hi world!' })}
 
-  return {
-    tag: 'div',
-    __keydown: onKeydown,
-  }
+    // Will become this:
+    <div id='...' class='hi-world'>
+      <p>Hi world!</p>
+    </div>
+  </section>
+`
+
+const TestComponent = ({ value }) => ref => {
+  ref.class.add('hi-world')
+
+  ref.html`
+    <p>${value}</p>
+  `
 }
 ```
 
-## Working with Neutro
-### Rendering elements vs. components
-The "tag" property dictates whether an object renders a standard element or a component. When a standard HTML tag is specified, any other properties of the object are applied directly to that element. This may include regular attributes or even event listeners. When a component is specified, however, any other properties of the object will be sent as parameters to the function of that component.
-
-Tags may also be omitted from objects entirely, in which case a div will be rendered.
-
-```js
-// In script
-render(document.body, {
-  class: 'example-class',
-  c: 'Content'
-})
-```
-
-```html
-<!-- Rendered HTML -->
-<div class="example-class">Content</div>
-```
-
-### Component return values
-Components always return a single root element, even if one is not specified. Components that provide an array return value, for example, will have their output wrapped in a "span" element. Doing so allows Neutro to greatly simplify the process of handling re-renders and self() calls.
-
-```js
-// A named function is used here, but this also applies to unnamed/lambda functions
-export default function Component() {
-  return [
-    { tag: 'div', c: 'Content 1' }
-    { tag: 'div', c: 'Content 2' }
-    { tag: 'div', c: 'Content 3' }
-  ]
-}
-```
-
-```html
-<!-- Rendered HTML -->
-<span>
-  <div>Content 1</div>
-  <div>Content 2</div>
-  <div>Content 3</div>
-</span>
-```
-
-### Using stores
-Just like hooks in React, Neutro stores must be used at the top level of components (never within conditions). This is because their values are preserved by their order within the component. If a store is accessed during one render but not another, the indexing of that component's stores will be offset by 1.
-
-```js
-export default function Component({ store }) {
-  // Do this
-  const store1 = store('value1')
-
-  // or even this
-  const store2 = exampleCondition ? store('value2a') : store('value2b')
-
-  // but NOT this
-  if (exampleCondition) {
-    const store3 = store('value3')
-  }
-
-  // because if store3 doesn't activate, store4 would adopt its value.
-  const store4 = store('value4')
-
-  ...
-}
-```
-
-Aside from this, Neutro permits quite a bit of flexibility in handling stores. When dealing with non-primitives such as Objects and Arrays, it's perfectly valid to modify stores directly instead of passing in new values. However, keep in mind that doing so will not automatically trigger re-renders. This may be used to your advantage to improve code readability, but can also be great in scenarios in which triggering a re-render is actually unwanted.
-
-```js
-export default function Component({ store }) {
-  // Here, we use store() in a similar manner to useRef() in React
-  const refs = store({ value1: 123, value2: 456 })
-
-  function updateData(newValue) {
-    // This does not trigger a re-render
-    refs().value1 = newValue
-
-    // but if you want to force one, you can then set the store to itself
-    refs(refs())
-  }
-
-  ...
-}
-```
-
-### Rendering plain HTML
-Programmatically inserting unescaped HTML onto the page can be dangerous (see [XSS](https://owasp.org/www-community/attacks/xss/)), but sometimes it's a necessity. While this should mostly be avoided, Neutro does provide an "html" property that allows you to set the innerHTML of an element.
-
-```js
-render(document.body, { 
-  tag: 'script',
-  html: 'console.log("With great power...")'
-})
-```
+### Keep stores and watches in order
+Lastly, know that stores and watches *probably* need to be kept in the same order every render cycle. This means that components with watches and stores inside them shouldn't be omitted or added in at will. This is a limitation that will likely be overcome in the future.
 
 ## Implementations
 * [Word Engine](https://github.com/camdowney/word-engine)

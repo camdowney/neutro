@@ -1,20 +1,22 @@
-import { q, watch } from '../src/index.js'
+import { q } from '../src/index.js'
 import { Concat } from './Concat.js'
 import { Counter } from './Counter.js'
 
 /////////////////
-const Test = () => ref => {
+const OuterComponent = ({ items }) => ref => {
   ref.html`
-    <div>
-      ${['abcd'].map(row => TestRow({ row }))}
-    </div>
+    ${items.map(item => `
+      <div>
+        ${InnerComponent({ item })}
+      </div>
+    `)}
   `
 }
 
-const TestRow = ({ row }) => ref => {
+const InnerComponent = ({ item }) => ref => {
   ref.html`
     <div>
-      ${row.split('').map(char => `<div>${char}</div>`)}
+      ${item}
     </div>
   `
 }
@@ -22,14 +24,12 @@ const TestRow = ({ row }) => ref => {
 
 const root = q('#root')
 
-watch(() => {
-  root.html`
-    <section>
-      <h1>Counter</h1>
-      ${[0, 1].map(n => Counter({ initialCount: n }))}
-      ${Concat()}
-      ${Concat()}
-      ${Test()}
-    </section>
-  `
-})
+root.html`
+  <section>
+    <h1>Counter</h1>
+    ${[0, 1].map(n => Counter({ initialCount: n }))}
+    ${Concat()}
+    ${Concat()}
+    ${OuterComponent({ items: ['a', 'b', 'c']})}
+  </section>
+`
