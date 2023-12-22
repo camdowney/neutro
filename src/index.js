@@ -57,10 +57,7 @@ export const store = initialValue => {
     get val() {
       const currWatchID = watchID - 1
 
-      storeIdToWatchIds[currStoreID] = storeIdToWatchIds[currStoreID] ?? []
-
-      if (!storeIdToWatchIds[currStoreID].includes(currWatchID))
-        storeIdToWatchIds[currStoreID].push(currWatchID)
+      storeIdToWatchIds[currStoreID] = [...new Set([...storeIdToWatchIds[currStoreID] ?? [], currWatchID])]
 
       return storeValues[currStoreID]
     },
