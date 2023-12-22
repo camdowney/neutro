@@ -55,14 +55,13 @@ export const store = initialValue => {
 
   return {
     get val() {
-      const currWatchID = watchID - 1
-
-      storeIdToWatchIds[currStoreID] = new Set([...storeIdToWatchIds[currStoreID] ?? [], currWatchID])
+      storeIdToWatchIds[currStoreID] = new Set([...storeIdToWatchIds[currStoreID] ?? [], watchID - 1])
 
       return storeValues[currStoreID]
     },
     set val(newValue) {
       storeValues[currStoreID] = newValue
+      
       storeID = currStoreID + 1
       storeIdToWatchIds[currStoreID].forEach(id => watchCallbacks[id]())
     },

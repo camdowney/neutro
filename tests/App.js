@@ -6,12 +6,12 @@ import { Counter } from './Counter.js'
 const Test = () => ref => {
   ref.html`
     <div>
-      ${['abcd'].map(row => TestInner({ row }))}
+      ${['abcd'].map(row => TestRow({ row }))}
     </div>
   `
 }
 
-const TestInner = ({ row }) => ref => {
+const TestRow = ({ row }) => ref => {
   ref.html`
     <div>
       ${row.split('').map(char => `<div>${char}</div>`)}
