@@ -54,7 +54,7 @@ import { q, store, watch } from 'https://cdn.jsdelivr.net/npm/neutro/min.js'
 
 ## Documentation
 ### Querying elements - q()
-The q function, short for 'query', accepts one argument: a selector. You can simply think of it as document.querySelector, except that it adds some usual functionality to its return object.
+The q function, short for 'query', accepts one argument: a selector. You can think of it as document.querySelector, except that it adds some usual functionality to its return object.
 
 The object it returns has two getters (val and class) and three functions (html(), q(), and on()). If you haven't already guessed, you may chain q() calls as deep as you'd like.
 
@@ -62,7 +62,7 @@ The object it returns has two getters (val and class) and three functions (html(
 q('#root').q('#btn').on('click', () => console.log('Hi!'))
 ```
 
-### Getting queried elements - q().val
+### Getting queried element references - q().val
 This one is pretty straightforward: calling .val on a queried element will simply return the corresponding HTML element in the DOM.
 
 ```js
@@ -70,7 +70,7 @@ console.log(q('#btn').val) // Logs: <button id='btn'></button>
 ```
 
 ### Modifying element classes - q().class
-This is also fairly straightforward and is simply a shortcut to calling .val.classList.
+This is also fairly straightforward and is merely a shortcut to calling .val.classList.
 
 ```js
 q('#btn').class.add('btn-blue') // Becomes: <button id='btn' class='btn-blue'></button>
@@ -81,7 +81,7 @@ This is where most of the magic takes place in Neutro. That being said, it's sti
 
 When you call .html() on a queried element, it starts with replacing the element's innerHTML with whatever you pass into it. If it's just a string value, then the work is done there. However, you may also pass in functions (components) as well. When this happens, a placeholder div will be inserted instead, and then the component will receive a reference to that placeholder. Since this relies on tagged templates, there are a few caveats, but overall it allows you to write markup similar to JSX without the need for transpilation.
 
-As for the components themselves, they simply need to return a function that accepts the reference that will be passed to them. Components don't need to return anything as a result; they should simply interact with their reference in order to render the desired markup.
+As for the components themselves, they just need to return a function that accepts the reference that will be passed to them. Components don't need to return anything as a result; they should interact with their reference in order to render the desired markup.
 
 ```js
 // Somewhere in your app
@@ -112,7 +112,7 @@ export const TestComponent = ({ value }) => ref => {
 ```
 
 ### Adding event listeners - q().on()
-Another straightforward function which simply accepts an event name and a callback. In contrast to more sophisticated (transpiled) frameworks in which you can add event listeners directly inside markup, event listeners in Neutro must be attached after markup has been rendered.
+Another straightforward function which accepts an event name and a callback. In contrast to more sophisticated (transpiled) frameworks in which you can add event listeners directly inside markup, event listeners in Neutro must be attached after markup has been rendered.
 
 ```js
 ref.html`
@@ -153,7 +153,7 @@ export const Counter = () => ref => {
 ### Maps inside .html()
 Remember that part of Neutro's simplicity lies in the fact that it uses tagged templates. That being said, JavaScript doesn't parse tagged templates as intuitively as you might think it does.
 
-Mapping values inside html() calls is the biggest drawback here. Maps that will lead to nested components inside tagged templates will simply not work. Maps must either return a tagged template that can be evaluated as a string, or simply another component.
+Mapping values inside html() calls is the biggest drawback here. Maps that will lead to nested components inside tagged templates do not work. Maps must either return a tagged template that can be evaluated as a string, or another component.
 
 ```js
 // ❌ This will not work:
