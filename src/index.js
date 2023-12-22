@@ -8,6 +8,8 @@ let storeIdToWatchIds = []
 let watchID = 0
 let watchCallbacks = []
 
+export const h = (...values) => ref => ref.html(...values)
+
 export const q = selector => {
   const ref = typeof selector === 'string' ? document.querySelector(selector) : selector
 
@@ -25,7 +27,7 @@ export const q = selector => {
       components.push(() => value(q(`#u${currCID}`)))
       cleanValues.push(`<div id="u${currCID}"></div>`)
     })
-  
+
     ref.innerHTML = cleanValues.map(v => v.replace(/\s+/g, ' ')).join('')
   
     components.forEach(c => c())

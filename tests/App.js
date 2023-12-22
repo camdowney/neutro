@@ -1,24 +1,20 @@
-import { q, watch } from '../src/index.js'
+import { q, h, watch } from '../src/index.js'
 import { Concat } from './Concat.js'
 import { Counter } from './Counter.js'
 
 /////////////////
 const Test = () => ref => {
-  console.log('render keyboard')
-
   ref.html`
     <div>
-      ${['abcd'].map(row => `
+      ${['abcd'].map(row => h`
         <div>
-          ${row.split('').map(char => Inner({ char }))}
+          ${row.split('').map(char => h`
+            <div>${char}</div>
+          `)}
         </div>
       `)}
     </div>
   `
-}
-
-const Inner = ({ char }) => ref => {
-  ref.html`${char}`
 }
 /////////////////
 
