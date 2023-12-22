@@ -15,7 +15,7 @@ export const q = (selector, root = document) => {
   // const ref = typeof selector === 'string' ? document.querySelector(selector) : selector
 
   const html = (strings, ...statements) => {
-    let values = [strings[0], strings.map((_, i) => [statements[i], strings[i + 1]])].flat(Infinity)
+    let values = [strings[0], statements.map((s, i) => [s, strings[i + 1]])].flat(Infinity)
     let cleanValues = []
     let components = []
 
@@ -29,7 +29,7 @@ export const q = (selector, root = document) => {
       cleanValues.push(`<div id="u${currCID}"></div>`)
     })
 
-    ref.innerHTML = cleanValues.map(v => v.replace(/\s+/g, ' ')).join('')
+    ref.innerHTML = cleanValues.join('')
   
     components.forEach(c => c())
   }
