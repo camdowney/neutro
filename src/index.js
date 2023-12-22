@@ -8,10 +8,11 @@ let storeIdToWatchIds = []
 let watchID = 0
 let watchCallbacks = []
 
-export const h = (...values) => ref => ref.html(...values)
+// export const h = (...values) => ref => ref.html(...values)
 
-export const q = selector => {
-  const ref = typeof selector === 'string' ? document.querySelector(selector) : selector
+export const q = (selector, root = document) => {
+  const ref = root.querySelector(selector)
+  // const ref = typeof selector === 'string' ? document.querySelector(selector) : selector
 
   const html = (strings, ...statements) => {
     let values = [strings[0], strings.map((_, i) => [statements[i], strings[i + 1]])].flat(Infinity)
@@ -37,11 +38,12 @@ export const q = selector => {
     get val() { return ref },
     get class() { return ref.classList },
     html,
-    q: selector => {
-      const e = [...ref.querySelectorAll(selector)].map(q)
-      if (e.length === 1) return e[0]
-      return e
-    },
+    q: selector => q(selector, ref),
+    // q: selector => {
+    //   const e = [...ref.querySelectorAll(selector)].map(q)
+    //   if (e.length === 1) return e[0]
+    //   return e
+    // },
     on: (eventName, callback) => ref.addEventListener(eventName, callback),
   }
 }
@@ -64,30 +66,19 @@ export const store = initialValue => {
     },
     set val(newValue) {
       storeValues[currStoreID] = newValue
-
-      // const prevStoreID = storeID
       storeID = currStoreID + 1
-
       storeIdToWatchIds[currStoreID].forEach(id => watchCallbacks[id]())
-
-      // storeID += prevStoreID
     },
   }
 }
 
 export const watch = callback => {
   const currWatchID = watchID++
-  
-  const watchCallback = () => {
-    // const prevWatchID = watchID
+
+  watchCallbacks[currWatchID] = () => {
     watchID = currWatchID + 1
-    
     callback()
-
-    // watchID += prevWatchID
   }
-
-  watchCallbacks[currWatchID] = watchCallback
 
   callback()
 }
