@@ -5,11 +5,7 @@ import { Counter } from './Counter.js'
 /////////////////
 const OuterComponent = ({ items }) => ref => {
   ref.html`
-    ${items.map(item => `
-      <div>
-        ${InnerComponent({ item })}
-      </div>
-    `)}
+    ${items.map(item => InnerComponent({ item }))}
   `
 }
 

@@ -1,4 +1,5 @@
 import { terser } from 'rollup-plugin-terser'
+import minifyHTML from 'rollup-plugin-minify-html-literals'
 
 export default [
   {
@@ -10,7 +11,8 @@ export default [
       }
     ],
     plugins: [
-      terser()
+      terser(),
+      minifyHTML(),
     ]
   }
 ]
