@@ -9,7 +9,7 @@ let watchID = 0
 let watchCallbacks = []
 
 export const q = (selector, root = document) => {
-  const elements = typeof selector === 'string' ? root.querySelectorAll(selector) : [selector]
+  const elements = typeof selector === 'string' ? [...root.querySelectorAll(selector)] : [selector]
 
   const html = (strings, ...statements) => {
     let values = [strings[0], statements.map((s, i) => [s, strings[i + 1]])].flat(Infinity)

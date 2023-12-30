@@ -1,5 +1,5 @@
 # Neutro
-Neutro is a ridiculously simple and lightweight (<1 KB min + gzip) solution for integrating reactivity and components into your JS application. No transpiler needed!
+Neutro is a ridiculously simple and lightweight (<1 KB min + gzip) solution for integrating reactivity and components into your JS application. No transpilation, and absolutely no magic!
 
 ## Creating Reactive Components
 ```js
@@ -49,7 +49,7 @@ npm i neutro
 
 jsDelivr
 ```js
-import { q, store, watch } from 'https://cdn.jsdelivr.net/npm/neutro/min.js'
+import { q, esc, store, watch } from 'https://cdn.jsdelivr.net/npm/neutro/min.js'
 ```
 
 ## Documentation
@@ -62,26 +62,46 @@ The object it returns has two getters (val and class) and three functions (html`
 q('#root').q('#btn').on('click', () => console.log('Hi!'))
 ```
 
-### Getting queried element references - q().val
-This one is pretty straightforward: calling .val on a queried element will simply return the corresponding HTML element in the DOM.
+### Getting DOM elements - q().val
+This one is pretty straightforward: calling .val on a queried element will return the corresponding HTML element in the DOM.
 
 ```js
 console.log(q('#btn').val) // Logs: <button id='btn'></button>
 ```
 
 ### Modifying element classes - q().class
-This is also fairly straightforward and is merely a shortcut to calling .val.classList.
+Merely a shortcut to calling .val.classList, since you are likely to use it a lot.
 
 ```js
 q('#btn').class.add('btn-blue') // Becomes: <button id='btn' class='btn-blue'></button>
 ```
 
+### Getting multiple queried elements - q().all()
+If your query expects multiple elements to be returned, you may retrieve and iterate over them by calling .all().
+
+```js
+q('btn').all().forEach(btn => btn.on('click', () => console.log('Hi!')))
+```
+
+### Adding event listeners - q().on()
+Accepts an event name and a callback in order to attach an event listener. In contrast to more sophisticated (transpiled) frameworks in which you can add event listeners directly inside markup, event listeners in Neutro must be attached after markup has been rendered.
+
+```js
+ref.html`
+  <button class='counter'>
+    ${count.val}
+  </button>
+`
+
+ref.q('button').on('click', () => count.val++)
+```
+
 ### Rendering HTML and components - q().html``
-This is where most of the magic takes place in Neutro. That being said, it's still quite simple under the hood.
+The recommended way to render markup in Neutro; and it's actually quite simple under the hood.
 
-When you call .html`` on a queried element, it starts with replacing the element's innerHTML with whatever you pass into it. If it's just a string value, then the work is done there. However, you may also pass in functions (components) as well. When this happens, a placeholder div will be inserted instead, and then the component will receive a reference to that placeholder. Since this relies on tagged templates, there are a few caveats, but overall it allows you to write markup similar to JSX without the need for transpilation.
+When you call .html`` on a queried element, it starts with replacing the element's innerHTML with whatever you pass into it. If it's just a string value, then the work is done there. However, you may also pass in functions (components) as well. When this happens, a placeholder div will be inserted instead, and then the component will receive a reference to that div. Since this relies on tagged templates, there are a few caveats, but overall it allows you to write markup similar to JSX without the need for transpilation.
 
-As for the components themselves, they just need to return a function that accepts the reference that will be passed to them. Components don't need to return anything as a result; they should interact with their reference in order to render the desired markup.
+As a result, components just need to return a function that accepts a reference and uses it to render the desired markup.
 
 ```js
 // Somewhere in your app
@@ -111,17 +131,16 @@ export const TestComponent = ({ value }) => ref => {
 }
 ```
 
-### Adding event listeners - q().on()
-Another straightforward function which accepts an event name and a callback. In contrast to more sophisticated (transpiled) frameworks in which you can add event listeners directly inside markup, event listeners in Neutro must be attached after markup has been rendered.
+### Escaping values - esc()
+Always escape user input and anything else coming from outside your application! Neutro cannot take care of this automatically since it relies on template strings, so you will need pay close attention to this yourself.
 
 ```js
+const params = new URLSearchParams(window.location.search)
+
 ref.html`
-  <button class='counter'>
-    ${count.val}
-  </button>
+  <input name='query' value='${esc(params.query)}'>
 `
 
-ref.q('button').on('click', () => count.val++)
 ```
 
 ### Reactive values and functions - store() + watch()
