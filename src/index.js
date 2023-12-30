@@ -8,11 +8,8 @@ let storeIdToWatchIds = []
 let watchID = 0
 let watchCallbacks = []
 
-// export const h = (...values) => ref => ref.html(...values)
-
 export const q = (selector, root = document) => {
-  const ref = root.querySelector(selector)
-  // const ref = typeof selector === 'string' ? document.querySelector(selector) : selector
+  const elements = typeof selector === 'string' ? root.querySelectorAll(selector) : [selector]
 
   const html = (strings, ...statements) => {
     let values = [strings[0], statements.map((s, i) => [s, strings[i + 1]])].flat(Infinity)
@@ -21,7 +18,7 @@ export const q = (selector, root = document) => {
 
     values.forEach(value => {
       if (value === undefined) return
-      if (typeof value !== 'function') return cleanValues.push(value + '')
+      if (typeof value !== 'function') return cleanValues.push((value + '').replace(/\s+/g, ' '))
 
       const currCID = cid++
 
@@ -29,24 +26,24 @@ export const q = (selector, root = document) => {
       cleanValues.push(`<div id="u${currCID}"></div>`)
     })
 
-    ref.innerHTML = cleanValues.join('')
+    elements[0].innerHTML = cleanValues.join('')
   
     components.forEach(c => c())
   }
   
   return {
-    get val() { return ref },
-    get class() { return ref.classList },
+    get val() { return elements[0] },
+    get class() { return elements[0].classList },
+    all: () => elements.map(q),
+    q: selector => q(selector, elements[0]),
+    on: (eventName, callback) => elements[0].addEventListener(eventName, callback),
     html,
-    q: selector => q(selector, ref),
-    // q: selector => {
-    //   const e = [...ref.querySelectorAll(selector)].map(q)
-    //   if (e.length === 1) return e[0]
-    //   return e
-    // },
-    on: (eventName, callback) => ref.addEventListener(eventName, callback),
   }
 }
+
+export const esc = str =>
+  (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#039;').trim()
 
 export const store = initialValue => {
   const currStoreID = storeID++
